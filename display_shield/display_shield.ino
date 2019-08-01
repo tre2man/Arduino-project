@@ -97,8 +97,8 @@ float mainmenu() //메인 메뉴 함수
 {
    lcd.setCursor(0,0);            
    lcd.print("select-> ");  //메인 메뉴 화면 구성하기 
+   lcd.setCursor(0,1);
    lcd.print("                ");
-   lcd.setCursor(9,0);
 
    lcd_key = read_LCD_buttons();   // read the buttons
    if(lcd_key==btnUP&&now!=3) now++;
@@ -115,7 +115,7 @@ float mainmenu() //메인 메뉴 함수
   if(now==2)lcd.print("2.SINE ");
   if(now==3)lcd.print("3.TRI  ");
 
-  delay(100);
+  delay(150);
 }
 
  
