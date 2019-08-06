@@ -194,7 +194,9 @@ void setup()
 {
    lcd.begin(16, 2);               // lcd 라이브러리 시작 
    lcd.setCursor(0,0);             // 초기화면 세팅 
-   lcd.print("select-> 1.PULSE");  
+   lcd.print("Function");
+   lcd.setCursor(0,1);
+   lcd.print("Generator");  
    
    //Serial.begin(9600);
    pinMode(roll,INPUT);  //가변저항 값 입력받기 위한 세팅 
@@ -206,6 +208,7 @@ void setup()
     digitalWrite(pulse, HIGH);    
    }
 
+   delay(1500);
 }
  
 void loop()
