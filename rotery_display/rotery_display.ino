@@ -6,9 +6,9 @@ int roll=A1;
 
 float roll_()
 {
-  float button=analogRead(roll);
+  float button=analogRead(roll);  시리얼통신 시작 
   lcd.setCursor(0,0);
-  lcd.print(button/1023*100,0);
+  lcd.print(button/1023*100,0);  //0부터 1023까지의 수를 0부터 100까지의 수로 변환
   lcd.print("  ");
 }
 
@@ -19,8 +19,5 @@ void setup() {
 }
 
 void loop() {
-  while(1)
-  {
-     roll_();
-  }
+  roll_();
 }
