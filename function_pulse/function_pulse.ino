@@ -167,7 +167,7 @@ float roll_(int mode) //가변 저항의 저항값 읽어온 후 파형 출력�
 int mainmenu() //메인 메뉴 함수 
 {
    lcd.setCursor(0,0);            
-   lcd.print("select-> ");  //메인 메뉴 화면 구성하기 
+   lcd.print("Select-> ");  //메인 메뉴 화면 구성하기 
    lcd.setCursor(0,1);
    lcd.print("                ");
 
