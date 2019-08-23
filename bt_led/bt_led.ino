@@ -1,31 +1,27 @@
 #include <SoftwareSerial.h>
+#define BT_RX D7
+#define BT_TX D8
 
-SoftwareSerial mySerial(2, 3); //블루투스의 Tx, Rx핀을 2번 3번핀으로 설정
+SoftwareSerial HM10(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
+                                   // TX핀(8번)은 HM10의 RX에 연결  
 
-const int LED=6;
-char bt;
+
+String location="";
 
 void setup() 
-{
-  Serial.begin(9600);
-  mySerial.begin(9600);
-  pinMode(LED,OUTPUT);
+{  
+  Serial.begin(115200);
+  HM10.begin(9600);
+}
+void loop() {
+  
+   while(HM10.available())  //mySerial에 전송된 값이 있으면
+   {
+     char myChar = (char)HM10.read();  //mySerial int 값을 char 형식으로 변환
+     location+=myChar;   //수신되는 문자를 myString에 모두 붙임 (1바이트씩 전송되는 것을 연결)
+     delay(5);           //수신 문자열 끊김 방지    
+    }
 }
 
-void loop() {
-  if (Serial.available()) 
-  {    //시리얼모니터에 입력된 데이터가 있다면
-    mySerial.write(Serial.read());  //블루투스를 통해 입력된 데이터 전달
-  }
-  
-  if (mySerial.available()) //블루투스로 받은 데이터가 있다면 실행 
-  {
-    bt=mySerial.read();
-    Serial.write(bt);
-    
-    if(bt=='A')
-      digitalWrite(LED,HIGH);
-    if(bt=='B')
-      digitalWrite(LED,LOW);
-  }
-}
+//4719025300 구미
+//1168066000 서울 
