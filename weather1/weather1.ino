@@ -8,13 +8,24 @@ SoftwareSerial HM10(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결
                                    // TX핀(8번)은 HM10의 RX에 연결 
 String location="";                                    
 
-const char* ssid = "wlan20";  // AP SSID
-const char* password = "0000003940"; // AP password
+const char* ssid = "ecrc";  // AP SSID
+const char* password = "ecrc1984"; // AP password
 
 const int httpPort = 80;
 String KMA_url = "/wid/queryDFSRSS.jsp?zone=4215061500";
 
 const char* SERVER = "www.kma.go.kr";
+
+void bt()
+{
+  int len=0;
+  while(len<10)
+  {
+    char myChar = (char)HM10.read();  //mySerial int 값을 char 형식으로 변환
+    location+=myChar;   //수신되는 문자를 myString에 모두 붙임 (1바이트씩 전송되는 것을 연결)
+    delay(5);           //수신 문자열 끊김 방지
+  }
+}
 
 
 void setup(void) 
