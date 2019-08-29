@@ -3,9 +3,9 @@
 // připojení potřebné knihovny
 #include <AD9833.h>
 // definice propojovacího pinu FSYNC
-#define pinFsync 10
+#define pinFsync 10 //10번핀이 싱크 
 // inicializace modulu z knihovny s nastavením pinu FSYNC
-AD9833 gen(pinFsync);
+AD9833 gen(pinFsync);  //함수 정의 
 
 void setup() {
   // zahájení komunikace po sériové lince
