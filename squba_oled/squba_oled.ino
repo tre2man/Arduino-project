@@ -1,6 +1,6 @@
 #include "U8glib.h"
 
-U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE);
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE); //SDA : A4 , SCL : A5
 
 #define CDS A0
    

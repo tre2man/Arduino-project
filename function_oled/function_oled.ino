@@ -1,9 +1,9 @@
 #include <PWM.h>
 #include <LiquidCrystal.h>
- 
-LiquidCrystal lcd(8, 9, 4, 5, 6, 7);           // select the pins used on the LCD panel
- 
-// define some values used by the panel and buttons
+#include "U8glib.h"
+
+U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE); //SDA : A4 , SCL : A5
+
 const int roll=A1; //가변저항 변수 
 const int pulse=3;
 
@@ -12,7 +12,7 @@ int adc_key_in  = 0; //버튼을 읽어온 값 저장하는 변수
 int nowselect=1; //1 펄스 2 사인 3 트라이앵글
 int freq=1; //1 Hz  2 KHz
 
-int output; //frequency (in Hz)
+int32_t frequency; //frequency (in Hz)
  
 #define btnRIGHT  1
 #define btnUP     2
@@ -104,11 +104,9 @@ int TRI()  //삼각파
 } 
 
 float roll_(int mode) //가변 저항의 저항값 읽어온 후 파형 출력하는 함수
-{   
+{
    float button=analogRead(roll); 
-   int temp;
-   Serial.print(button);
-   Serial.print("\n");
+   int temp,output;
    
    if(button<100)
    {
@@ -121,30 +119,55 @@ float roll_(int mode) //가변 저항의 저항값 읽어온 후 파형 출력�
     temp=button;
     output=temp/10*10;
    }
-
+   
    lcd.setCursor(11,1);
    lcd.print(output);
-   lcd.print("  ");
+   lcd.print("  "); 
 
-  if(mode==1&&freq==1) 
-  {
-    bool success = SetPinFrequencySafe(pulse,output);
-    pwmWrite(pulse,output);
-  }
-  if(mode==1&&freq==2) 
-  {
-    int output1=output*1000;
-    bool success = SetPinFrequencySafe(pulse,output1);
-    pwmWrite(pulse,output1);
-  }
-  
+   /*
+   if(freq=1)  //Hz
+   {
+    if(mode==1) //펄스파 출력 
+    {
+     digitalWrite(pulse,HIGH);
+     pwmWrite(pulse,output);
+     break;
+    }
+    if(mode==2)
+    {
+     break;
+    }
+   if(mode==3)
+    {
+     break;
+    }
+   }
+   
+   if(freq=2) //KHz
+   {
+    if(mode==1) //펄스파 출력 
+    {
+     digitalWrite(pulse,HIGH);
+     pwmWrite(pulse,output);
+     break;
+    }
+    if(mode==2)
+    {
+     
+    }
+   if(mode==3)
+    {
+     
+    }
+   }
+   */
 }
 
 
 int mainmenu() //메인 메뉴 함수 
 {
    lcd.setCursor(0,0);            
-   lcd.print("Select-> ");  //메인 메뉴 화면 구성하기 
+   lcd.print("select-> ");  //메인 메뉴 화면 구성하기 
    lcd.setCursor(0,1);
    lcd.print("                ");
 
@@ -171,22 +194,22 @@ void setup()
 {
    lcd.begin(16, 2);               // lcd 라이브러리 시작 
    lcd.setCursor(0,0);             // 초기화면 세팅 
-   lcd.print("Function");
-   lcd.setCursor(0,1);
-   lcd.print("Generator");  
+   lcd.print("select-> 1.PULSE");  
    
    //Serial.begin(9600);
    pinMode(roll,INPUT);  //가변저항 값 입력받기 위한 세팅 
-   
-   InitTimersSafe();
-   pinMode(pulse, OUTPUT);
-   digitalWrite(pulse, HIGH);
 
-   delay(1500);
-   Serial.begin(9600);
+   bool success = SetPinFrequencySafe(pulse, frequency);
+   if(success) 
+   {
+    pinMode(pulse, OUTPUT);
+    digitalWrite(pulse, HIGH);    
+   }
+
 }
  
 void loop()
-{  
+{
+   //Serial.print("new loop\n");   
    mainmenu();
 }
