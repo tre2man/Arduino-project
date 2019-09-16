@@ -26,15 +26,21 @@ void loop()
   do
   {
     int freq=analogRead(roll);
+    if(freq<10) freq=10;
     Serial.print(freq);
     Serial.print("\n");
 
-    u8g.setFont(u8g_font_unifont);
-    u8g.setPrintPos(0,30);
-    u8g.print(freq);
+    u8g.drawFrame(1,1,126,62);
+    u8g.drawStr(25,15,"SINE WAVE");
 
-    gen.ApplySignal(SINE_WAVE,REG1,freq);
+    u8g.setFont(u8g_font_unifont);
+    u8g.setPrintPos(40,40);
+    u8g.print(freq);
+    u8g.drawStr(75,40,"Hz");
+
+    gen.ApplySignal(TRIANGLE_WAVE,REG1,freq);
   }while( u8g.nextPage() );
   
-  delay(500);
+  delay(1500);
+  //SINE_WAVE, TRIANGLE_WAVE, SQUARE_WAVE, and HALF_SQUARE_WAVE
 }
