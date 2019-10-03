@@ -42,7 +42,6 @@ void loop() {
   servo_wrist.write(w);
   servo_hand.write(h);
 
-  //Serial.print("%d %d %d %d",f,e,w,h);
   Serial.print(f); Serial.print(" ");
   Serial.print(e); Serial.print(" ");
   Serial.print(w); Serial.print(" ");
