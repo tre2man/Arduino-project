@@ -37,6 +37,13 @@ void loop() {
   int w=map(analogRead(wrist_in),0,1023,0,359);
   int h=map(analogRead(hand_in),0,1023,0,359);
   
+  /*
+  if(f>160) f=160;
+  if(e>160) e=160;
+  if(w>160) w=160;
+  if(h>160) h=160;
+  */
+   
   servo_floor.write(f);
   servo_elbow.write(e);
   servo_wrist.write(w);
