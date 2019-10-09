@@ -1,11 +1,14 @@
 #include <ESP8266WiFi.h>
 #include <time.h>
 #include <SoftwareSerial.h>
-#include <SimpleTimer.h>
+#include <SimpleTimer.h> //인터럽트를 활용한 멀티태스킹 
 #define BT_RX D7
 #define BT_TX D8
 
-SimpleTimer timer;
+//Board : NodeMcu 0.9 (keystudio Board)
+//BT : HM-10 BLE Module (keystudio)
+
+SimpleTimer timer;  //타이머 선언 
 
 SoftwareSerial HM10(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
                                    // TX핀(8번)은 HM10의 RX에 연결                                    
@@ -18,7 +21,7 @@ String KMA_url = "/wid/queryDFSRSS.jsp?zone=";
 
 const char* SERVER = "www.kma.go.kr";
 String location=""; 
-int count=0;
+int count=0;  //location 길이 확인 위한 변수 
 
 void weather();
 
@@ -112,5 +115,5 @@ void weather()
   delay(1000);
 }
 
-//1159068000
-//4377025300
+//1159068000 디폴트 
+//4377025300 충북 음성군 금왕읍 
