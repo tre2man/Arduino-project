@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <time.h>
 #include <SoftwareSerial.h>
-#include <SimpleTimer.h> //인터럽트를 활용한 멀티태스킹 
+#include <SimpleTimer.h> //인터럽트를 활용한 멀티태스킹 (타이머)
 #define BT_RX D7
 #define BT_TX D8
 
@@ -23,7 +23,7 @@ const char* SERVER = "www.kma.go.kr";
 String location=""; 
 int count=0;  //location 길이 확인 위한 변수 
 
-void weather();
+void weather(); 
 
 void setup() 
 {
