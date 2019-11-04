@@ -33,6 +33,9 @@
     Don't forget power - connect 3.3V and GND
 */
 
+
+//스쿠버 투명 oled 디스플레이 출력, 센서값 입력 
+
 #include "HyperDisplay_UG2856KLBAG01.h"   // Your library can be installed here: http://librarymanager/All#SparkFun_Transparent_Graphical_OLED
                                           // The rest of the Layer Cake:         http://librarymanager/All#SparkFun_HyperDisplay_SSD1309
                                           //                                     http://librarymanager/All#SparkFun_HyperDisplay
@@ -44,10 +47,10 @@
 #define SPI_PORT SPI        // Used if USE_SPI == 1
 
 #define RES_PIN 2           // Optional
-#define CS_PIN 1            // Used only if USE_SPI == 1
-#define DC_PIN 1            // Used only if USE_SPI == 1
+#define CS_PIN A4            // Used only if USE_SPI == 1
+#define DC_PIN A5            // Used only if USE_SPI == 1
 
-#define USE_SPI 0           // Choose your interface. 0 = I2C, 1 = SPI
+#define USE_SPI 1           // Choose your interface. 0 = I2C, 1 = SPI
 
 // END USER SETUP
 
@@ -74,18 +77,30 @@ void setup() {
   Wire.setClock(400000);
 #endif /* USSE_SPI */
 
+myTOLED.clearDisplay();
+//myTOLED.pixelSet(10, 10);
+myTOLED.setTextCursor(10,10);
+
 // Don't show the logo on boards with small memory
+/*
 #if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega168__)
   showLogo( );      // The showLogo function is a hacky way to get a large bitmap into program space without using <avr/pgspace.h>
 #endif
+*/
 }
+
+int i=0;
 
 void loop() {
 
   myTOLED.clearDisplay();
-  myTOLED.pixelSet(0, 0);
+  //myTOLED.pixelSet(0, 0);
+  myTOLED.setTextCursor(10,10);
+  myTOLED.print(i);
+  i++; 
+  delay(1000);
   
-  
+  /*
   lineTest();
   delay(500);
 
@@ -94,6 +109,7 @@ void loop() {
 
   circleTest();
   delay(500);
+  */
   
 }
 
@@ -161,7 +177,7 @@ void circleTest( void )
   }
   myTOLED.circleSet((myTOLED.xExt/2 - 1),(myTOLED.yExt/2 - 1), myTOLED.xExt/2, true);
 }
-
+/*
 #if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega168__)
 void showLogo( void ){
   myTOLED.setContrastControl(0);
@@ -241,3 +257,4 @@ void showLogo( void ){
   myTOLED.setContrastControl(128);
 }
 #endif
+*/
