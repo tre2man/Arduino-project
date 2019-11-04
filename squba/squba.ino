@@ -74,19 +74,35 @@ void setup() {
   Wire.setClock(400000);
 #endif /* USSE_SPI */
 
+myTOLED.clearDisplay();
+//myTOLED.pixelSet(10, 10);
+myTOLED.setTextCursor(10,10);
+
 // Don't show the logo on boards with small memory
+/*
 #if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega168__)
   showLogo( );      // The showLogo function is a hacky way to get a large bitmap into program space without using <avr/pgspace.h>
 #endif
+*/
 }
+
+int i=0;
 
 void loop() {
 
   myTOLED.clearDisplay();
+<<<<<<< HEAD
   myTOLED.pixelSet(0, 0);
 
   Apple();
   delay(10000);
+=======
+  //myTOLED.pixelSet(0, 0);
+  myTOLED.setTextCursor(10,10);
+  myTOLED.print(i);
+  i++; 
+  delay(1000);
+>>>>>>> 2248a29a4bc79f929a9f2268c98a9a4791218d65
   
   /*
   lineTest();
@@ -98,6 +114,7 @@ void loop() {
   circleTest();
   delay(500);
   */
+<<<<<<< HEAD
   
 }
 
@@ -167,6 +184,8 @@ void Apple( void ){
   
   
   
+=======
+>>>>>>> 2248a29a4bc79f929a9f2268c98a9a4791218d65
   
 }
 
@@ -234,7 +253,7 @@ void circleTest( void )
   }
   myTOLED.circleSet((myTOLED.xExt/2 - 1),(myTOLED.yExt/2 - 1), myTOLED.xExt/2, true);
 }
-
+/*
 #if !defined(__AVR_ATmega328P__) && !defined(__AVR_ATmega168__)
 void showLogo( void ){
   myTOLED.setContrastControl(0);
@@ -314,3 +333,4 @@ void showLogo( void ){
   myTOLED.setContrastControl(128);
 }
 #endif
+*/
