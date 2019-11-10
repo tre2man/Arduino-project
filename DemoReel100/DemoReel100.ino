@@ -168,25 +168,50 @@ void thunder()
 {
   static int i=0;
   fadeToBlackBy( leds, NUM_LEDS, 10);
-  if(i%80==0)
+  if(i%80==0) //thunder 1
   {
+    leds[4]=CHSV( color, 200, 255);
+    leds[11]=CHSV( color, 200, 255);
+    leds[12]=CHSV( color, 200, 255);
+    leds[18]=CHSV( color, 200, 255);
+    leds[19]=CHSV( color, 200, 255);
+    leds[20]=CHSV( color, 200, 255);
     leds[25]=CHSV( color, 200, 255);
     leds[26]=CHSV( color, 200, 255);
     leds[27]=CHSV( color, 200, 255);
     leds[28]=CHSV( color, 200, 255);
-    leds[29]=CHSV( color, 200, 255);
-    leds[30]=CHSV( color, 200, 255);
-    leds[31]=CHSV( color, 200, 255);
-    leds[32]=CHSV( color, 200, 255);
-    leds[33]=CHSV( color, 200, 255);
-    leds[34]=CHSV( color, 200, 255);
     leds[35]=CHSV( color, 200, 255);
     leds[36]=CHSV( color, 200, 255);
     leds[37]=CHSV( color, 200, 255);
     leds[38]=CHSV( color, 200, 255);
-    leds[39]=CHSV( color, 200, 255);
+    leds[43]=CHSV( color, 200, 255);
+    leds[44]=CHSV( color, 200, 255);
+    leds[45]=CHSV( color, 200, 255);
+    leds[51]=CHSV( color, 200, 255);
+    leds[52]=CHSV( color, 200, 255);
+    leds[59]=CHSV( color, 200, 255);
   }
 
+  if(i%100==0) //thunder 2
+  {
+    leds[2]=CHSV( color, 200, 255);
+    leds[9]=CHSV( color, 200, 255);
+    leds[10]=CHSV( color, 200, 255);
+    leds[16]=CHSV( color, 200, 255);
+    leds[17]=CHSV( color, 200, 255);
+    leds[18]=CHSV( color, 200, 255);
+    leds[26]=CHSV( color, 200, 255);
+    leds[27]=CHSV( color, 200, 255);
+    leds[28]=CHSV( color, 200, 255);
+    leds[34]=CHSV( color, 200, 255);
+    leds[35]=CHSV( color, 200, 255);
+    leds[42]=CHSV( color, 200, 255);
+  }
+
+  if(i%200==0)
+  {
+    
+  }
   i++;
   delay(10);
 }
