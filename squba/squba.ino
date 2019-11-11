@@ -92,7 +92,7 @@ void loop() {
 
   myTOLED.clearDisplay();
   myTOLED.pixelSet(0, 0);
-/*
+
   Apple();
   delay(10000);
   //myTOLED.pixelSet(0, 0);
@@ -101,7 +101,7 @@ void loop() {
   i++; 
   delay(1000);
 
-  */
+  
   
   lineTest();
   delay(500);
