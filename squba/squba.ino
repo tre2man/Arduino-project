@@ -44,8 +44,8 @@
 #define SPI_PORT SPI        // Used if USE_SPI == 1
 
 #define RES_PIN 2           // Optional
-#define CS_PIN A2            // Used only if USE_SPI == 1
-#define DC_PIN A3            // Used only if USE_SPI == 1
+#define CS_PIN A4            // Used only if USE_SPI == 1
+#define DC_PIN A5            // Used only if USE_SPI == 1
 
 #define USE_SPI 1           // Choose your interface. 0 = I2C, 1 = SPI
 
@@ -91,10 +91,12 @@ int i=0;
 void loop() {
 
   myTOLED.clearDisplay();
+
   myTOLED.pixelSet(0, 0);
 
   Apple();
   delay(10000);
+
   //myTOLED.pixelSet(0, 0);
   myTOLED.setTextCursor(10,10);
   myTOLED.print(i);
@@ -102,7 +104,7 @@ void loop() {
   delay(1000);
 
   
-  
+  /*
   lineTest();
   delay(500);
 
@@ -111,7 +113,7 @@ void loop() {
 
   circleTest();
   delay(500);
-  
+  */
 
   
 }
@@ -181,7 +183,7 @@ void Apple( void ){
   
   
   
- 
+
   
 }
 
