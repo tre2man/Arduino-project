@@ -44,8 +44,8 @@
 #define SPI_PORT SPI        // Used if USE_SPI == 1
 
 #define RES_PIN 2           // Optional
-#define CS_PIN A4            // Used only if USE_SPI == 1
-#define DC_PIN A5            // Used only if USE_SPI == 1
+#define CS_PIN 52            // Used only if USE_SPI == 1
+#define DC_PIN 53            // Used only if USE_SPI == 1
 
 #define USE_SPI 1           // Choose your interface. 0 = I2C, 1 = SPI
 
@@ -61,9 +61,9 @@
 
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200); //due 115200
 
-  Serial.println(F("Example1_DisplayTest: Transparent Graphical OLED"));
+  Serial.println("Example1_DisplayTest: Transparent Graphical OLED");
 
 #if USE_SPI 
   SPI_PORT.begin();

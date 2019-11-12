@@ -168,7 +168,7 @@ void thunder()
 {
   static int i=0;
   fadeToBlackBy( leds, NUM_LEDS, 10);
-  if(i%80==0) //thunder 1
+  if(i%80==0) //thunder 1 center
   {
     leds[4]=CHSV( color, 200, 255);
     leds[11]=CHSV( color, 200, 255);
@@ -210,7 +210,16 @@ void thunder()
 
   if(i%200==0)
   {
-    
+    leds[29]=CHSV( color, 200, 255);
+    leds[36]=CHSV( color, 200, 255);
+    leds[37]=CHSV( color, 200, 255);
+    leds[43]=CHSV( color, 200, 255);
+    leds[44]=CHSV( color, 200, 255);
+    leds[45]=CHSV( color, 200, 255);
+    leds[46]=CHSV( color, 200, 255);
+    leds[47]=CHSV( color, 200, 255);
+    leds[53]=CHSV( color, 200, 255);
+    leds[61]=CHSV( color, 200, 255);
   }
   i++;
   delay(10);
