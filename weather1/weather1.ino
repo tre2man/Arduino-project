@@ -1,5 +1,8 @@
+//Board : NodeMcu 0.9 (keystudio Board)
+//BT : HM-10 BLE Module (keystudio)
+
+
 #include <ESP8266WiFi.h>
-#include <time.h>
 #include <SoftwareSerial.h>
 #include <SimpleTimer.h> //인터럽트를 활용한 멀티태스킹 (타이머)
 #include "FastLED.h" //네오픽셀 출력
@@ -16,13 +19,11 @@ CRGB leds[NUM_LEDS];
 #define BRIGHTNESS         30
 #define FRAMES_PER_SECOND  120
 
-//Board : NodeMcu 0.9 (keystudio Board)
-//BT : HM-10 BLE Module (keystudio)
 
-
-FASTLED_USING_NAMESPACE
+FASTLED_USING_NAMESPACE //fastled 사용
 
 SimpleTimer timer;  //타이머 선언 
+
 
 SoftwareSerial HM10(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
                                    // TX핀(8번)은 HM10의 RX에 연결                                    
@@ -34,15 +35,15 @@ const int httpPort = 80;
 String KMA_url = "/wid/queryDFSRSS.jsp?zone=";
 
 const char* SERVER = "www.kma.go.kr";
-String location=""; 
+String location="1159068000"; 
 int count=0;  //location 길이 확인 위한 변수 
 
 String a[3];
 int indexNum=0;
-String temp="";
-String wfEn="";
-String reh="";
-String tmp_str="";
+String temp;
+String wfEn;
+String reh;
+String tmp_str;
 
 void weather(); 
 
@@ -50,6 +51,7 @@ void setup()
 {
   Serial.begin(115200);
   HM10.begin(9600);
+  timer.setInterval(2000,weather); //타이머를 주어서 일정시간마다 데이터를 불러올수 있게 한다
   
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -60,7 +62,6 @@ void setup()
     delay(1000);
   }
   
-  timer.setInterval(2000,weather); //타이머를 주어서 일정시간마다 데이터를 불러올수 있게 한다
   
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
@@ -78,7 +79,7 @@ void loop()
      count++;
    }
 
-   //if(~~ 전시용 출력으로 변수가 변경되면 전시용 네오픽셀 출력  
+   rain();
     
    if(count==10) //지역을 판별하는 코드는 10자리 이므로 10자리의 숫자를 받고 난 후에는 전체url에 복사해준다.
    {
@@ -126,7 +127,7 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 
       indexNum= line.indexOf("</wfEn>");
 
-      if(i>0){
+      if(indexNum>0){
         tmp_str="<wfEn>";
         wfEn = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
         Serial.println(wfEn);  
@@ -134,7 +135,7 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 
       indexNum= line.indexOf("</reh>");
 
-      if(i>0){
+      if(indexNum>0){
         tmp_str="<reh>";
         reh = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
         Serial.println(reh);  
@@ -144,7 +145,6 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
   }
 
   Serial.println(KMA_url);
-  delay(1000);
 }
 
 //구현한 날씨 : 비 맑음 번개  추가)눈 흐림
@@ -229,14 +229,14 @@ void snow() //눈 효과
   
   fadeToBlackBy( leds, NUM_LEDS, 100);
    
-   i++;
+   //i++;
   
   delay(10);
 }
 
 void sun() //맑은날 효과
 {
-  color=25;
+  int color=25;
   leds[0]=CHSV( color, 200, 255);
   leds[3]=CHSV( color, 200, 255);
   leds[4]=CHSV( color, 200, 255);
@@ -266,7 +266,7 @@ void sun() //맑은날 효과
 
 void thunder() //천둥번개 효과
 {
-  static int i=0;
+  static int i=0,color=100;
   fadeToBlackBy( leds, NUM_LEDS, 10);
   if(i==200) //thunder 1 center
   {
