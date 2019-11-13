@@ -1,7 +1,6 @@
 //Board : NodeMcu 0.9 (keystudio Board)
 //BT : HM-10 BLE Module (keystudio)
 
-
 #include <ESP8266WiFi.h>
 #include <SoftwareSerial.h>
 #include <SimpleTimer.h> //인터럽트를 활용한 멀티태스킹 (타이머)
@@ -330,4 +329,5 @@ void thunder() //천둥번개 효과
 
 
 //1159068000 디폴트 
-//4377025300 충북 음성군 금왕읍 
+//4377025300 충북 음성군 금왕읍
+//4717065000 안동시 옥동 
