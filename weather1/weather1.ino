@@ -35,7 +35,7 @@ const int httpPort = 80;
 String KMA_url = "/wid/queryDFSRSS.jsp?zone=";
 
 const char* SERVER = "www.kma.go.kr";
-String location="1159068000"; 
+String location=""; 
 int count=0;  //location 길이 확인 위한 변수 
 
 String a[3];
@@ -79,7 +79,9 @@ void loop()
      count++;
    }
 
-   rain();
+   sun();
+   //rain();
+   //thunder();
     
    if(count==10) //지역을 판별하는 코드는 10자리 이므로 10자리의 숫자를 받고 난 후에는 전체url에 복사해준다.
    {
@@ -236,39 +238,52 @@ void snow() //눈 효과
 
 void sun() //맑은날 효과
 {
-  int color=25;
-  leds[0]=CHSV( color, 200, 255);
-  leds[3]=CHSV( color, 200, 255);
-  leds[4]=CHSV( color, 200, 255);
-  leds[7]=CHSV( color, 200, 255);
-  leds[9]=CHSV( color, 200, 255);
+  static int i=0;
+  fadeToBlackBy( leds, NUM_LEDS, 20);
+  int color=64;
+  if(i==0)
+  {
+  leds[10]=CHSV( color, 200, 255);
   leds[11]=CHSV( color, 200, 255);
   leds[12]=CHSV( color, 200, 255);
-  leds[14]=CHSV( color, 200, 255);
+  leds[13]=CHSV( color, 200, 255);
+  leds[17]=CHSV( color, 200, 255);
   leds[18]=CHSV( color, 200, 255);
   leds[19]=CHSV( color, 200, 255);
   leds[20]=CHSV( color, 200, 255);
   leds[21]=CHSV( color, 200, 255);
-  for(int i=24;i<40;i++) leds[i]=CHSV( color, 200, 255);
+  leds[22]=CHSV( color, 200, 255);
+  leds[25]=CHSV( color, 200, 255);
+  leds[26]=CHSV( color, 200, 255);
+  leds[29]=CHSV( color, 200, 255);
+  leds[30]=CHSV( color, 200, 255);
+  leds[33]=CHSV( color, 200, 255);
+  leds[34]=CHSV( color, 200, 255);
+  leds[37]=CHSV( color, 200, 255);
+  leds[38]=CHSV( color, 200, 255);
+  leds[41]=CHSV( color, 200, 255);
   leds[42]=CHSV( color, 200, 255);
   leds[43]=CHSV( color, 200, 255);
   leds[44]=CHSV( color, 200, 255);
   leds[45]=CHSV( color, 200, 255);
-  leds[49]=CHSV( color, 200, 255);
+  leds[46]=CHSV( color, 200, 255);
+  leds[50]=CHSV( color, 200, 255);
   leds[51]=CHSV( color, 200, 255);
   leds[52]=CHSV( color, 200, 255);
-  leds[54]=CHSV( color, 200, 255);
-  leds[56]=CHSV( color, 200, 255);
-  leds[59]=CHSV( color, 200, 255);
-  leds[60]=CHSV( color, 200, 255);
+  leds[53]=CHSV( color, 200, 255);
+  }
+  i++;
+  if(i==70) i=0;
+  delay(10);
 }
 
 
 void thunder() //천둥번개 효과
 {
-  static int i=0,color=100;
-  fadeToBlackBy( leds, NUM_LEDS, 10);
-  if(i==200) //thunder 1 center
+  static int i=0;
+  int color=50;
+  fadeToBlackBy( leds, NUM_LEDS, 30);
+  if(i==140) //thunder 1 center
   {
     leds[4]=CHSV( color, 200, 255);
     leds[11]=CHSV( color, 200, 255);
@@ -308,7 +323,7 @@ void thunder() //천둥번개 효과
     leds[42]=CHSV( color, 200, 255);
   }
 
-  if(i==100) //thunder 3
+  if(i==70) //thunder 3
   {
     leds[29]=CHSV( color, 200, 255);
     leds[36]=CHSV( color, 200, 255);
@@ -319,11 +334,12 @@ void thunder() //천둥번개 효과
     leds[46]=CHSV( color, 200, 255);
     leds[47]=CHSV( color, 200, 255);
     leds[53]=CHSV( color, 200, 255);
+    leds[54]=CHSV( color, 200, 255);
     leds[61]=CHSV( color, 200, 255);
   }
   i++;
-  if(i==300) i=0;
-  delay(10);
+  if(i==210) i=0;
+  delay(6);
 }
 
 
