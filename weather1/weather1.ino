@@ -26,9 +26,14 @@ SimpleTimer timer;  //타이머 선언
 
 SoftwareSerial HM10(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
                                    // TX핀(8번)은 HM10의 RX에 연결                                    
-
+/*
 const char* ssid = "ecrc";  // AP SSID
 const char* password = "ecrc1984"; // AP password
+*/
+
+const char* ssid = "wlan20";  // AP SSID
+const char* password = "0000003940"; // AP password
+
 
 const int httpPort = 80;
 String KMA_url = "/wid/queryDFSRSS.jsp?zone=";
@@ -77,8 +82,10 @@ void loop()
      delay(5);           //수신 문자열 끊김 방지
      count++;
    }
-
-   sun();
+  Serial.println(count);
+   //cloud();
+   //snow();
+   //sun();
    //rain();
    //thunder();
     
@@ -114,12 +121,14 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
     client.print(String("GET ") + KMA_url + " HTTP/1.1\r\n" +"Host: " + SERVER + "\r\n" + "Connection: close\r\n\r\n");
 
     delay(10);
-    while(client.available()){
+    while(client.available())
+    {
       String line = client.readStringUntil('\n');
 
       indexNum= line.indexOf("</temp>");
 
-      if(indexNum>0){
+      if(indexNum>0)
+      {
         tmp_str="<temp>";
         temp = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
         Serial.println(temp); 
@@ -128,7 +137,8 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 
       indexNum= line.indexOf("</wfEn>");
 
-      if(indexNum>0){
+      if(indexNum>0)
+      {
         tmp_str="<wfEn>";
         wfEn = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
         Serial.println(wfEn);  
@@ -136,7 +146,8 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 
       indexNum= line.indexOf("</reh>");
 
-      if(indexNum>0){
+      if(indexNum>0)
+      {
         tmp_str="<reh>";
         reh = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
         Serial.println(reh);  
@@ -228,11 +239,74 @@ void snow() //눈 효과
 
   int arr[8]={0,9,16,25,32,41,48,57}; //날리면서 내리는 눈 
   
-  fadeToBlackBy( leds, NUM_LEDS, 100);
+  fadeToBlackBy( leds, NUM_LEDS, 200);
    
-   //i++;
+  static int i=0;
+  static int r1=0;
+  static int r2=0;
+  static int r3=0;
+  static int r4=0;
+  static int r5=0;
+  static int r6=0;
+  static int r7=0;
+  static int r8=0;
   
-  delay(10);
+  fadeToBlackBy( leds, NUM_LEDS, 30);
+
+   if(i>0&&i<9)
+   {
+    (leds[arr[r2]+1])=CRGB::White; 
+    r2++;
+   }
+   if(i>3&&i<12)
+   {
+    (leds[arr[r5]+4])=CRGB::White; 
+    r5++;
+   }
+   if(i>6&&i<15)
+   {
+    (leds[arr[r1]])=CRGB::White; 
+    r1++;
+   }
+   if(i>9&&i<18)
+   {
+    (leds[arr[r6]+5])=CRGB::White; 
+    r6++;
+   }
+   if(i>12&&i<21)
+   {
+    (leds[arr[r8]+7])=CRGB::White; 
+    r8++;
+   }
+   if(i>15&&i<24)
+   {
+    (leds[arr[r3]+2])=CRGB::White; 
+    r3++;
+   }
+   if(i>18&&i<27)
+   {
+    (leds[arr[r7]+6])=CRGB::White; 
+    r7++;
+   }
+   if(i>21&&i<30)
+   {
+    (leds[arr[r4]+3])=CRGB::White; 
+    r4++;
+   }
+   //CHSV( color, 0, 255)
+   i++;
+
+   if(r1>8) r1=0;
+   if(r2>8) r2=0;  
+   if(r3>8) r3=0;  
+   if(r4>8) r4=0;  
+   if(r5>8) r5=0;  
+   if(r6>8) r6=0;  
+   if(r7>8) r7=0;  
+   if(r8>8) r8=0;     
+   if(i>27) i=0;
+  
+  delay(100);
 }
 
 void sun() //맑은날 효과
@@ -339,6 +413,18 @@ void thunder() //천둥번개 효과
   i++;
   if(i==210) i=0;
   delay(6);
+}
+
+void cloud()
+{
+  static int i=0;
+  int color=150;
+  fadeToBlackBy( leds, NUM_LEDS, 10);
+  for(int j=18;j<22;j++) leds[j]=CHSV( color, random(200) , 155+random(100));
+  for(int j=25;j<31;j++) leds[j]=CHSV( color, random(200) , 155+random(100));
+  for(int j=32;j<48;j++) leds[j]=CHSV( color, random(200) , 155+random(100));
+  for(int j=49;j<55;j++) leds[j]=CHSV( color, random(200) , 155+random(100));
+  delay(50);
 }
 
 

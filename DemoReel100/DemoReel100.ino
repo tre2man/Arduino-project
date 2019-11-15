@@ -52,10 +52,10 @@ void loop()
   //gPatterns[gCurrentPatternNumber]();
   //sinelon();
   //rainbowWithGlitter();
-  //confetti();
+  confetti();
   //bpm();
   //juggle();
-  rain();
+  //rain();
   //sun();
 
   // send the 'leds' array out to the actual LED strip
@@ -167,6 +167,7 @@ void sun()
 void thunder()
 {
   static int i=0;
+  int color=100;
   fadeToBlackBy( leds, NUM_LEDS, 10);
   if(i%80==0) //thunder 1 center
   {
@@ -256,7 +257,7 @@ void confetti()
   // random colored speckles that blink in and fade smoothly
   fadeToBlackBy( leds, NUM_LEDS, 10);
   int pos = random16(NUM_LEDS);
-  leds[pos] += CHSV( gHue + random8(64), 200, 255);
+  leds[pos] += CHSV( gHue + random8(64), 200, 255);  //0~63 중 8개의 무작위 숫자 추출
 }
 
 int poses1[8]={0};
