@@ -15,7 +15,7 @@
 #define NUM_LEDS    64
 CRGB leds[NUM_LEDS];
 
-#define BRIGHTNESS         30
+#define BRIGHTNESS         100
 #define FRAMES_PER_SECOND  120
 
 
