@@ -103,8 +103,17 @@ void loop()
 
   //if(~~ 날씨의 상태가 어떠하면 네오픽셀 함수 출력 디폴트는 sun
 
+  patterns[CurrentPattern](); //현재 나와야 하는 패턴 출력
+  EVERY_N_SECONDS(4){next();}  //4초마다 새 패턴을 출력하게하는 함수 출력
+
   FastLED.show(); //네오픽셀 출력
   FastLED.delay(1000/FRAMES_PER_SECOND);  //딜레이를 준다
+}
+
+void next() //0~4 반복하는 함수
+{
+  CurrentPattern++;
+  CurrentPattern%=5;
 }
 
 void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
