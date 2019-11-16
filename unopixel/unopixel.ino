@@ -1,13 +1,13 @@
 //Board : NodeMcu 0.9 (keystudio Board)
 //BT : HM-10 BLE Module (keystudio)
 
-#include <ESP8266WiFi.h>
+//#include <ESP8266WiFi.h>
 #include <SoftwareSerial.h>
 #include <SimpleTimer.h> //인터럽트를 활용한 멀티태스킹 (타이머)
 #include "FastLED.h" //네오픽셀 출력
 
-#define BT_RX D7
-#define BT_TX D8
+#define BT_RX 7
+#define BT_TX 8
 
 #define DATA_PIN    6
 #define LED_TYPE    WS2811
@@ -15,7 +15,7 @@
 #define NUM_LEDS    64
 CRGB leds[NUM_LEDS];
 
-#define BRIGHTNESS         100
+#define BRIGHTNESS         120
 #define FRAMES_PER_SECOND  120
 
 
@@ -49,12 +49,14 @@ String wfEn;
 String reh;
 String tmp_str;
 
-void weather(); 
+//void weather(); 
 
 void setup() 
 {
   Serial.begin(115200);
+  
   HM10.begin(9600);
+  /*
   timer.setInterval(2000,weather); //타이머를 주어서 일정시간마다 데이터를 불러올수 있게 한다
   
   WiFi.mode(WIFI_STA);
@@ -65,7 +67,7 @@ void setup()
     Serial.print(".");
     delay(1000);
   }
-  
+  */
   
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
@@ -77,48 +79,49 @@ int CurrentPattern=0;
 
 void loop() 
 {
-   timer.run();
+  
+   //timer.run();
+   /*
    if(HM10.available())  //mySerial에 전송된 값이 있으면
    {
-     KMA_url = "/wid/queryDFSRSS.jsp?zone="; //새로 값을 받으면 기존에 있던 url은 초기화 시킨다.
      char myChar = (char)HM10.read();  //mySerial int 값을 char 형식으로 변환
      location+=myChar;   //수신되는 문자를 myString에 모두 붙임 (1바이트씩 전송되는 것을 연결)
      delay(5);           //수신 문자열 끊김 방지
      count++;
-   }
-  Serial.println(count);
-   //cloud();
-   //snow();
-   //sun();
-   //rain();
-   //thunder();
-    
+   } 
+   
+
+   Serial.println(count); 
    if(count==10) //지역을 판별하는 코드는 10자리 이므로 10자리의 숫자를 받고 난 후에는 전체url에 복사해준다.
    {
-    //if(location==~~ 로케이션 값이 디폴트 모드일 경우 전시용 출력 위한 변수 변경
+    KMA_url = "/wid/queryDFSRSS.jsp?zone="; //새로 값을 받으면 기존에 있던 url은 초기화 시킨다.
     KMA_url+=location;
     location=""; //지역을 판별하는 변수 초기화 
     count=0;
    }
+   
+
+   Serial.println(KMA_url);
+   */
+   
 
   //if(~~ 날씨의 상태가 어떠하면 네오픽셀 함수 출력 디폴트는 sun
 
+  patterns[CurrentPattern](); //현재 나와야 하는 패턴 출력
+  EVERY_N_SECONDS(5){next();}  //4초마다 새 패턴을 출력하게하는 함수 출력
   FastLED.show(); //네오픽셀 출력
   FastLED.delay(1000/FRAMES_PER_SECOND);  //딜레이를 준다
 }
 
+void next() //0~4 반복하는 함수
+{
+  CurrentPattern++;
+  CurrentPattern%=5;
+}
+/*
 void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 {
   WiFiClient client;
-
-  /*
-  String a[3];
-  int i=0;
-  String temp;
-  String wfEn;
-  String reh;
-  String tmp_str;
-  */
   
   if (client.connect(SERVER, httpPort)) 
   {
@@ -162,9 +165,9 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 
   Serial.println(KMA_url);
 }
+*/
 
 //구현한 날씨 : 비 맑음 번개  추가)눈 흐림
-
 
 void rain() //비 효과
 {
@@ -237,11 +240,11 @@ void rain() //비 효과
   delay(80);
 }
 
+int arr[8]={0,9,16,25,32,41,48,57}; //날리면서 내리는 눈 
+
 void snow() //눈 효과
 {
   int color=150; //->흰색으로 수정
-
-  int arr[8]={0,9,16,25,32,41,48,57}; //날리면서 내리는 눈 
   
   fadeToBlackBy( leds, NUM_LEDS, 200);
    
@@ -297,7 +300,6 @@ void snow() //눈 효과
     (leds[arr[r4]+3])=CRGB::White; 
     r4++;
    }
-   //CHSV( color, 0, 255)
    i++;
 
    if(r1>8) r1=0;
@@ -310,7 +312,7 @@ void snow() //눈 효과
    if(r8>8) r8=0;     
    if(i>27) i=0;
   
-  delay(100);
+  delay(99);
 }
 
 void sun() //맑은날 효과
@@ -419,7 +421,7 @@ void thunder() //천둥번개 효과
   delay(6);
 }
 
-void cloud()
+void cloud() //구름 효과
 {
   static int i=0;
   int color=150;
