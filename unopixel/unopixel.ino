@@ -15,8 +15,8 @@
 #define NUM_LEDS    64
 CRGB leds[NUM_LEDS];
 
-#define BRIGHTNESS         120
-#define FRAMES_PER_SECOND  120
+#define BRIGHTNESS         120 //밝기
+#define FRAMES_PER_SECOND  120 //프레임
 
 
 FASTLED_USING_NAMESPACE //fastled 사용
@@ -74,43 +74,36 @@ void setup()
 }
 
 typedef void(*patternlist[])();  //패턴 함수를 각 배열에 저장하는 새로운 타입, 구조체 생성
-patternlist patterns={rain,snow,thunder,cloud,sun}; //구조체 안에 패턴함수를 저장
+patternlist patterns={thunder,snow,rain,cloud,sun}; //구조체 안에 패턴함수를 저장
 int CurrentPattern=0;
 
 void loop() 
 {
-  
-   //timer.run();
-   /*
-   if(HM10.available())  //mySerial에 전송된 값이 있으면
+      
+   while(HM10.available())  //mySerial에 전송된 값이 있으면
    {
      char myChar = (char)HM10.read();  //mySerial int 값을 char 형식으로 변환
      location+=myChar;   //수신되는 문자를 myString에 모두 붙임 (1바이트씩 전송되는 것을 연결)
-     delay(5);           //수신 문자열 끊김 방지
-     count++;
+     delay(5);
    } 
    
-
-   Serial.println(count); 
-   if(count==10) //지역을 판별하는 코드는 10자리 이므로 10자리의 숫자를 받고 난 후에는 전체url에 복사해준다.
+   if(!location.equals("")) 
    {
     KMA_url = "/wid/queryDFSRSS.jsp?zone="; //새로 값을 받으면 기존에 있던 url은 초기화 시킨다.
     KMA_url+=location;
-    location=""; //지역을 판별하는 변수 초기화 
-    count=0;
+   } 
+   
+
+   //Serial.println(KMA_url);
+   if(location==1000000000)
+   {
+    patterns[CurrentPattern]();             //현재 나와야 하는 패턴 출력
+    EVERY_N_SECONDS(4){next();}             //4초마다 새 패턴을 출력하게하는 함수 출력
    }
+
+   FastLED.show();                         //네오픽셀 출력
+   delay(1000/FRAMES_PER_SECOND);  //딜레이를 준다
    
-
-   Serial.println(KMA_url);
-   */
-   
-
-  //if(~~ 날씨의 상태가 어떠하면 네오픽셀 함수 출력 디폴트는 sun
-
-  patterns[CurrentPattern](); //현재 나와야 하는 패턴 출력
-  EVERY_N_SECONDS(5){next();}  //4초마다 새 패턴을 출력하게하는 함수 출력
-  FastLED.show(); //네오픽셀 출력
-  FastLED.delay(1000/FRAMES_PER_SECOND);  //딜레이를 준다
 }
 
 void next() //0~4 반복하는 함수
@@ -257,8 +250,6 @@ void snow() //눈 효과
   static int r6=0;
   static int r7=0;
   static int r8=0;
-  
-  fadeToBlackBy( leds, NUM_LEDS, 30);
 
    if(i>0&&i<9)
    {
