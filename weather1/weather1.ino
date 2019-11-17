@@ -24,7 +24,7 @@ FASTLED_USING_NAMESPACE //fastled 사용
 SimpleTimer timer;  //타이머 선언 
 
 
-SoftwareSerial HM10(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
+SoftwareSerial Bluetooth(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
                                    // TX핀(8번)은 HM10의 RX에 연결                                    
 /*
 const char* ssid = "ecrc";  // AP SSID
@@ -46,7 +46,7 @@ void setup()
 {
   Serial.begin(115200);
   
-  HM10.begin(9600);
+  Bluetooth.begin(9600);
   
   timer.setInterval(2000,weather); //타이머를 주어서 일정시간마다 데이터를 불러올수 있게 한다
   
@@ -75,10 +75,10 @@ String reh_cpy="";  //습도
 
 void loop() 
 {
-  timer.run();
-   while(HM10.available())  //mySerial에 전송된 값이 있으면
+   timer.run();
+   while(Bluetooth.available())  //mySerial에 전송된 값이 있으면
    {
-     char myChar = (char)HM10.read();  //mySerial int 값을 char 형식으로 변환
+     char myChar = (char)Bluetooth.read();  //mySerial int 값을 char 형식으로 변환
      location+=myChar;   //수신되는 문자를 myString에 모두 붙임 (1바이트씩 전송되는 것을 연결)
      delay(5);
    } 
@@ -108,13 +108,13 @@ void loop()
    
    FastLED.show();                           //네오픽셀 출력
    FastLED.delay(1000/FRAMES_PER_SECOND);    //딜레이를 준다
-   
 }
 
 void next() //0~4 반복하는 함수
 {
   CurrentPattern++;
   CurrentPattern%=5;
+  FastLED.clear();
 }
 
 void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
