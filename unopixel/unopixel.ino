@@ -1,13 +1,13 @@
 //Board : NodeMcu 0.9 (keystudio Board)
 //BT : HM-10 BLE Module (keystudio)
 
-#include <ESP8266WiFi.h>
+//#include <ESP8266WiFi.h>
 #include <SoftwareSerial.h>
 #include <SimpleTimer.h> //인터럽트를 활용한 멀티태스킹 (타이머)
 #include "FastLED.h" //네오픽셀 출력
 
-#define BT_RX D7
-#define BT_TX D8
+#define BT_RX 7
+#define BT_TX 8
 
 #define DATA_PIN    6
 #define LED_TYPE    WS2811
@@ -24,62 +24,65 @@ FASTLED_USING_NAMESPACE //fastled 사용
 SimpleTimer timer;  //타이머 선언 
 
 
-SoftwareSerial Bluetooth(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
+SoftwareSerial HM10(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
                                    // TX핀(8번)은 HM10의 RX에 연결                                    
-
+/*
 const char* ssid = "ecrc";  // AP SSID
 const char* password = "ecrc1984"; // AP password
+*/
 
-/*
 const char* ssid = "wlan20";  // AP SSID
 const char* password = "0000003940"; // AP password
-*/
 
 
 const int httpPort = 80;
-String KMA_url = "/wid/queryDFSRSS.jsp?zone=1159068000";
+String KMA_url = "/wid/queryDFSRSS.jsp?zone=";
 
 const char* SERVER = "www.kma.go.kr";
+String location=""; 
+int count=0;  //location 길이 확인 위한 변수 
 
-void weather(); 
+String a[3];
+int indexNum=0;
+String temp;
+String wfEn;
+String reh;
+String tmp_str;
+
+//void weather(); 
 
 void setup() 
 {
   Serial.begin(115200);
   
-  Bluetooth.begin(9600);
-  
+  HM10.begin(9600);
+  /*
   timer.setInterval(2000,weather); //타이머를 주어서 일정시간마다 데이터를 불러올수 있게 한다
   
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  Serial.println("\nConnecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED) {
+  Serial.println("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) 
+  {
     Serial.print(".");
     delay(1000);
-  }  
+  }
+  */
   
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
 }
 
 typedef void(*patternlist[])();  //패턴 함수를 각 배열에 저장하는 새로운 타입, 구조체 생성
-patternlist patterns={rain,thunder,sun,cloud,snow}; //구조체 안에 패턴함수를 저장
+patternlist patterns={thunder,snow,rain,cloud,sun}; //구조체 안에 패턴함수를 저장
 int CurrentPattern=0;
-
-String location=""; 
-String checkLocation="1000000000";
-
-String temp_cpy=""; //온도 
-String wfEn_cpy=""; //날씨
-String reh_cpy="";  //습도
 
 void loop() 
 {
-   timer.run();
-   while(Bluetooth.available())  //mySerial에 전송된 값이 있으면
+      
+   while(HM10.available())  //mySerial에 전송된 값이 있으면
    {
-     char myChar = (char)Bluetooth.read();  //mySerial int 값을 char 형식으로 변환
+     char myChar = (char)HM10.read();  //mySerial int 값을 char 형식으로 변환
      location+=myChar;   //수신되는 문자를 myString에 모두 붙임 (1바이트씩 전송되는 것을 연결)
      delay(5);
    } 
@@ -88,53 +91,34 @@ void loop()
    {
     KMA_url = "/wid/queryDFSRSS.jsp?zone="; //새로 값을 받으면 기존에 있던 url은 초기화 시킨다.
     KMA_url+=location;
-    checkLocation=location;
-    location="";
    } 
+   
 
-   Serial.println(checkLocation);
-
-   if(checkLocation=="1000000000") //자유 모드일 경우
+   //Serial.println(KMA_url);
+   if(location==1000000000)
    {
     patterns[CurrentPattern]();             //현재 나와야 하는 패턴 출력
-    EVERY_N_SECONDS(5){next();}             //4초마다 새 패턴을 출력하게하는 함수 출력
+    EVERY_N_SECONDS(4){next();}             //4초마다 새 패턴을 출력하게하는 함수 출력
    }
-   else
-   {
-    if(wfEn_cpy=="Clear") sun();
-    else if(wfEn_cpy=="Mostly Cloudy"||wfEn_cpy=="Cloudy") cloud();
-    else if(wfEn_cpy=="Rain"||wfEn_cpy=="Rain/Snow"||wfEn_cpy=="Shower") rain();
-    else if(wfEn_cpy=="Snow") snow();
-   }
+
+   FastLED.show();                         //네오픽셀 출력
+   delay(1000/FRAMES_PER_SECOND);  //딜레이를 준다
    
-   FastLED.show();                           //네오픽셀 출력
-   FastLED.delay(1000/FRAMES_PER_SECOND);    //딜레이를 준다
 }
 
 void next() //0~4 반복하는 함수
 {
   CurrentPattern++;
   CurrentPattern%=5;
-  FastLED.clear();
 }
-
+/*
 void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 {
   WiFiClient client;
-
-  String a[3];
-  int indexNum=0;
-  String temp;
-  String wfEn;
-  String reh;
-  String tmp_str;
   
-    if (client.connect(SERVER, httpPort)) 
-    {
-
-    client.print(String("GET ") + KMA_url + " HTTP/1.1\r\n" +
-    "Host: " + SERVER + "\r\n" + 
-    "Connection: close\r\n\r\n");
+  if (client.connect(SERVER, httpPort)) 
+  {
+    client.print(String("GET ") + KMA_url + " HTTP/1.1\r\n" +"Host: " + SERVER + "\r\n" + "Connection: close\r\n\r\n");
 
     delay(10);
     while(client.available())
@@ -147,7 +131,6 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
       {
         tmp_str="<temp>";
         temp = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
-        if(temp!="") temp_cpy=temp;
         Serial.println(temp); 
 
       }
@@ -158,7 +141,6 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
       {
         tmp_str="<wfEn>";
         wfEn = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
-        if(wfEn!="") wfEn_cpy=wfEn;
         Serial.println(wfEn);  
       }
 
@@ -168,7 +150,6 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
       {
         tmp_str="<reh>";
         reh = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
-        if(reh!="") reh_cpy=reh;
         Serial.println(reh);  
         break;
       }
@@ -177,6 +158,7 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 
   Serial.println(KMA_url);
 }
+*/
 
 //구현한 날씨 : 비 맑음 번개  추가)눈 흐림
 
@@ -251,9 +233,10 @@ void rain() //비 효과
   delay(80);
 }
 
+int arr[8]={0,9,16,25,32,41,48,57}; //날리면서 내리는 눈 
+
 void snow() //눈 효과
 {
-  int arr[8]={0,9,16,25,32,41,48,57}; //날리면서 내리는 눈 
   int color=150; //->흰색으로 수정
   
   fadeToBlackBy( leds, NUM_LEDS, 200);
@@ -441,14 +424,9 @@ void cloud() //구름 효과
   delay(50);
 }
 
+
+
+
 //1159068000 디폴트 
 //4377025300 충북 음성군 금왕읍
 //4717065000 안동시 옥동 
-//4215061500 강릉시
-//4111369000 수원시
-//4831034000 거제시
-//4729053000 경산시
-//4681025000 강진군
-//4579031000 고창군
-//5013025300 서귀포
-//4425051000 계룡시
