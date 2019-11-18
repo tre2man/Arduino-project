@@ -45,15 +45,15 @@ void setup(void)
 
 void loop()
 {
-  while(HM10.available())  //mySerial에 전송된 값이 있으면
-  {
+  //while(HM10.available())  //mySerial에 전송된 값이 있으면
+  //{
     while(HM10.available())
     {
       char myChar = (char)HM10.read();  //mySerial int 값을 char 형식으로 변환
       location+=myChar;   //수신되는 문자를 myString에 모두 붙임 (1바이트씩 전송되는 것을 연결)
       delay(5);           //수신 문자열 끊김 방지
     }
-  }
+  //}
 
   if(!location.equals("Now Location=")) Serial.println(location);
   location="Now Location=";

@@ -26,13 +26,14 @@ SimpleTimer timer;  //타이머 선언
 
 SoftwareSerial HM10(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
                                    // TX핀(8번)은 HM10의 RX에 연결                                    
-/*
+
 const char* ssid = "ecrc";  // AP SSID
 const char* password = "ecrc1984"; // AP password
-*/
 
+/*
 const char* ssid = "wlan20";  // AP SSID
 const char* password = "0000003940"; // AP password
+*/
 
 
 const int httpPort = 80;
@@ -82,11 +83,11 @@ void loop()
      delay(5);           //수신 문자열 끊김 방지
      count++;
    }
-  Serial.println(count);
+  //Serial.println(count);
    //cloud();
    //snow();
    //sun();
-   //rain();
+   rain();
    //thunder();
     
    if(count==10) //지역을 판별하는 코드는 10자리 이므로 10자리의 숫자를 받고 난 후에는 전체url에 복사해준다.
@@ -106,15 +107,6 @@ void loop()
 void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
 {
   WiFiClient client;
-
-  /*
-  String a[3];
-  int i=0;
-  String temp;
-  String wfEn;
-  String reh;
-  String tmp_str;
-  */
   
   if (client.connect(SERVER, httpPort)) 
   {
