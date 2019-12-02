@@ -32,13 +32,21 @@ void setup() {
 }
 
 void loop() {
+  
+  int a=90;
+  servo_floor.write(a);
+  Serial.println(a);
+  
+  
+  
+  
   int f=map(analogRead(floor_in),0,1023,0,359); //맵핑을 통해 0~1023까지의 값을 0~359로 조정
   int e=map(analogRead(elbow_in),0,1023,0,359);
   int w=map(analogRead(wrist_in),0,1023,0,359);
   int h=map(analogRead(hand_in),0,1023,0,359);
    
   servo_floor.write(f); //입력받은 값을 서보모터로 출력
-  servo_elbow.write(e);
+  servo_elbow.write(e); 
   servo_wrist.write(w);
   servo_hand.write(h);
 
@@ -46,7 +54,9 @@ void loop() {
   Serial.println(e);
   Serial.println(w); 
   Serial.println(h);
-  Serial.print("\n");
 
-  delay(10); //시간 조절
+  //delay(10); //시간 조절
+  
+  
+  
 }
