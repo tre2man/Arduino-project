@@ -26,14 +26,18 @@ SimpleTimer timer;  //타이머 선언
 
 SoftwareSerial Bluetooth(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
                                    // TX핀(8번)은 HM10의 RX에 연결                                    
-
+/*
 const char* ssid = "ecrc";  // AP SSID
 const char* password = "ecrc1984"; // AP password
+*/
 
 /*
 const char* ssid = "wlan20";  // AP SSID
 const char* password = "0000003940"; // AP password
 */
+
+const char* ssid = "969696";  // AP SSID
+const char* password = "239239239"; // AP password
 
 
 const int httpPort = 80;
