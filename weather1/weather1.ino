@@ -71,14 +71,14 @@ typedef void(*patternlist[])();  //패턴 함수를 각 배열에 저장하는 �
 patternlist patterns={rain,thunder,sun,cloud,snow}; //구조체 안에 패턴함수를 저장
 int CurrentPattern=0;
 
-String location=""; 
+String location="";
 String checkLocation="1000000000";
 
-String temp_cpy=""; //온도 
+String temp_cpy=""; //온도
 String wfEn_cpy=""; //날씨
 String reh_cpy="";  //습도
 
-void loop() 
+void loop()
 {
    timer.run();
    while(Bluetooth.available())  //mySerial에 전송된 값이 있으면
@@ -86,15 +86,15 @@ void loop()
      char myChar = (char)Bluetooth.read();  //mySerial int 값을 char 형식으로 변환
      location+=myChar;   //수신되는 문자를 myString에 모두 붙임 (1바이트씩 전송되는 것을 연결)
      delay(5);
-   } 
-   
-   if(!location.equals("")) 
+   }
+
+   if(!location.equals(""))
    {
     KMA_url = "/wid/queryDFSRSS.jsp?zone="; //새로 값을 받으면 기존에 있던 url은 초기화 시킨다.
     KMA_url+=location;
     checkLocation=location;
     location="";
-   } 
+   }
 
    Serial.println(checkLocation);
 
@@ -110,7 +110,7 @@ void loop()
     else if(wfEn_cpy=="Rain"||wfEn_cpy=="Rain/Snow"||wfEn_cpy=="Shower") rain();
     else if(wfEn_cpy=="Snow") snow();
    }
-   
+
    FastLED.show();                           //네오픽셀 출력
    FastLED.delay(1000/FRAMES_PER_SECOND);    //딜레이를 준다
 }
@@ -132,12 +132,12 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
   String wfEn;
   String reh;
   String tmp_str;
-  
-    if (client.connect(SERVER, httpPort)) 
+
+    if (client.connect(SERVER, httpPort))
     {
 
     client.print(String("GET ") + KMA_url + " HTTP/1.1\r\n" +
-    "Host: " + SERVER + "\r\n" + 
+    "Host: " + SERVER + "\r\n" +
     "Connection: close\r\n\r\n");
 
     delay(10);
@@ -152,7 +152,7 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
         tmp_str="<temp>";
         temp = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
         if(temp!="") temp_cpy=temp;
-        Serial.println(temp); 
+        Serial.println(temp);
 
       }
 
@@ -163,7 +163,7 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
         tmp_str="<wfEn>";
         wfEn = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
         if(wfEn!="") wfEn_cpy=wfEn;
-        Serial.println(wfEn);  
+        Serial.println(wfEn);
       }
 
       indexNum= line.indexOf("</reh>");
@@ -173,7 +173,7 @@ void weather() //기상청 서버에서 날씨 받아서 정보 리턴하기
         tmp_str="<reh>";
         reh = line.substring(line.indexOf(tmp_str)+tmp_str.length(),indexNum);
         if(reh!="") reh_cpy=reh;
-        Serial.println(reh);  
+        Serial.println(reh);
         break;
       }
     }
