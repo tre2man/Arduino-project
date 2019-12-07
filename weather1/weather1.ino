@@ -21,19 +21,23 @@ CRGB leds[NUM_LEDS];
 
 FASTLED_USING_NAMESPACE //fastled 사용
 
-SimpleTimer timer;  //타이머 선언 
+SimpleTimer timer;  //타이머 선언
 
 
-SoftwareSerial Bluetooth(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결 
-                                   // TX핀(8번)은 HM10의 RX에 연결                                    
-
+SoftwareSerial Bluetooth(BT_RX,BT_TX);  // RX핀(7번)은 HM10의 TX에 연결
+                                        // TX핀(8번)은 HM10의 RX에 연결
+/*
 const char* ssid = "ecrc";  // AP SSID
 const char* password = "ecrc1984"; // AP password
+*/
 
 /*
 const char* ssid = "wlan20";  // AP SSID
 const char* password = "0000003940"; // AP password
 */
+
+const char* ssid = "969696";  // AP SSID
+const char* password = "239239239"; // AP password
 
 
 const int httpPort = 80;
@@ -41,24 +45,24 @@ String KMA_url = "/wid/queryDFSRSS.jsp?zone=1159068000";
 
 const char* SERVER = "www.kma.go.kr";
 
-void weather(); 
+void weather();
 
-void setup() 
+void setup()
 {
   Serial.begin(115200);
-  
+
   Bluetooth.begin(9600);
-  
+
   timer.setInterval(2000,weather); //타이머를 주어서 일정시간마다 데이터를 불러올수 있게 한다
-  
+
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.println("\nConnecting to WiFi");
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");
     delay(1000);
-  }  
-  
+  }
+
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.setBrightness(BRIGHTNESS);
 }
@@ -192,72 +196,72 @@ void rain() //비 효과
   static int r6=5;
   static int r7=6;
   static int r8=7;
-  
+
   fadeToBlackBy( leds, NUM_LEDS, 100);
 
    if(i>0&&i<9)
    {
-    leds[r2]=CHSV( color, 200, 255); 
+    leds[r2]=CHSV( color, 200, 255);
     r2+=8;
    }
    if(i>3&&i<12)
    {
-    leds[r5]=CHSV( color, 200, 255); 
+    leds[r5]=CHSV( color, 200, 255);
     r5+=8;
    }
    if(i>6&&i<15)
    {
-    leds[r1]=CHSV( color, 200, 255); 
+    leds[r1]=CHSV( color, 200, 255);
     r1+=8;
    }
    if(i>9&&i<18)
    {
-    leds[r6]=CHSV( color, 200, 255); 
+    leds[r6]=CHSV( color, 200, 255);
     r6+=8;
    }
    if(i>12&&i<21)
    {
-    leds[r8]=CHSV( color, 200, 255); 
+    leds[r8]=CHSV( color, 200, 255);
     r8+=8;
    }
    if(i>15&&i<24)
    {
-    leds[r3]=CHSV( color, 200, 255); 
+    leds[r3]=CHSV( color, 200, 255);
     r3+=8;
    }
    if(i>18&&i<27)
    {
-    leds[r7]=CHSV( color, 200, 255); 
+    leds[r7]=CHSV( color, 200, 255);
     r7+=8;
    }
    if(i>21&&i<30)
    {
-    leds[r4]=CHSV( color, 200, 255); 
+    leds[r4]=CHSV( color, 200, 255);
     r4+=8;
    }
-   
+
    i++;
 
    if(r1>64) r1=0;
-   if(r2>64) r2=1;  
-   if(r3>64) r3=2;  
-   if(r4>64) r4=3;  
-   if(r5>64) r5=4;  
-   if(r6>64) r6=5;  
-   if(r7>64) r7=6;  
-   if(r8>64) r8=7;     
+   if(r2>64) r2=1;
+   if(r3>64) r3=2;
+   if(r4>64) r4=3;
+   if(r5>64) r5=4;
+   if(r6>64) r6=5;
+   if(r7>64) r7=6;
+   if(r8>64) r8=7;
    if(i>31) i=0;
-  
+
   delay(80);
 }
 
 void snow() //눈 효과
 {
-  int arr[8]={0,9,16,25,32,41,48,57}; //날리면서 내리는 눈 
+  int arr[8]={0,9,16,25,32,41,48,57}; //날리면서 내리는 눈
   int color=150; //->흰색으로 수정
-  
+
   fadeToBlackBy( leds, NUM_LEDS, 200);
-   
+
   static int i=0;
   static int r1=0;
   static int r2=0;
@@ -270,56 +274,56 @@ void snow() //눈 효과
 
    if(i>0&&i<9)
    {
-    (leds[arr[r2]+1])=CRGB::White; 
+    (leds[arr[r2]+1])=CRGB::White;
     r2++;
    }
    if(i>3&&i<12)
    {
-    (leds[arr[r5]+4])=CRGB::White; 
+    (leds[arr[r5]+4])=CRGB::White;
     r5++;
    }
    if(i>6&&i<15)
    {
-    (leds[arr[r1]])=CRGB::White; 
+    (leds[arr[r1]])=CRGB::White;
     r1++;
    }
    if(i>9&&i<18)
    {
-    (leds[arr[r6]+5])=CRGB::White; 
+    (leds[arr[r6]+5])=CRGB::White;
     r6++;
    }
    if(i>12&&i<21)
    {
-    (leds[arr[r8]+7])=CRGB::White; 
+    (leds[arr[r8]+7])=CRGB::White;
     r8++;
    }
    if(i>15&&i<24)
    {
-    (leds[arr[r3]+2])=CRGB::White; 
+    (leds[arr[r3]+2])=CRGB::White;
     r3++;
    }
    if(i>18&&i<27)
    {
-    (leds[arr[r7]+6])=CRGB::White; 
+    (leds[arr[r7]+6])=CRGB::White;
     r7++;
    }
    if(i>21&&i<30)
    {
-    (leds[arr[r4]+3])=CRGB::White; 
+    (leds[arr[r4]+3])=CRGB::White;
     r4++;
    }
    i++;
 
    if(r1>8) r1=0;
-   if(r2>8) r2=0;  
-   if(r3>8) r3=0;  
-   if(r4>8) r4=0;  
-   if(r5>8) r5=0;  
-   if(r6>8) r6=0;  
-   if(r7>8) r7=0;  
-   if(r8>8) r8=0;     
+   if(r2>8) r2=0;
+   if(r3>8) r3=0;
+   if(r4>8) r4=0;
+   if(r5>8) r5=0;
+   if(r6>8) r6=0;
+   if(r7>8) r7=0;
+   if(r8>8) r8=0;
    if(i>27) i=0;
-  
+
   delay(99);
 }
 
@@ -441,9 +445,9 @@ void cloud() //구름 효과
   delay(50);
 }
 
-//1159068000 디폴트 
+//1159068000 디폴트
 //4377025300 충북 음성군 금왕읍
-//4717065000 안동시 옥동 
+//4717065000 안동시 옥동
 //4215061500 강릉시
 //4111369000 수원시
 //4831034000 거제시
