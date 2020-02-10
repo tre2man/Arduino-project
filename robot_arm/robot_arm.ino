@@ -4,7 +4,7 @@
 
 const int floor_in=A0; //입력 부분 순서대로 a0 a1 a2 a3 연결
 const int elbow_in=A1;
-const int wrist_in=A4;
+const int wrist_in=A2;
 const int hand_in=A3;
 
 const int floor_moter=4; //입력받은 값 모터로 전달 변수 4 5 6 7
@@ -36,7 +36,7 @@ void loop() {
   int f=map(analogRead(floor_in),0,1023,0,160); //맵핑을 통해 0~1023까지의 값을 0~359로 조정
   int e=map(analogRead(elbow_in),0,1023,0,160);
   int w=map(analogRead(wrist_in),0,1023,0,160);
-  int h=map(analogRead(hand_in),0,1023,0,40);
+  int h=map(analogRead(hand_in),0,1023,53,111);
    
   servo_floor.write(f); //입력받은 값을 서보모터로 출력
   servo_elbow.write(e); 
