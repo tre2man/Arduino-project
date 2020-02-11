@@ -75,8 +75,8 @@ void setup() {
   pinMode(wrist_in,INPUT);
   pinMode(hand_in,INPUT);
 
-  pinMode(record,INPUT);  //풀업 저항으로 변경
-  pinMode(play,INPUT);  //풀업 저항으로 변경 
+  pinMode(record,INPUT_PULLUP);  
+  pinMode(play,INPUT_PULLUP);   
 
   pinMode(red,OUTPUT);
   pinMode(green,OUTPUT);
@@ -105,10 +105,7 @@ void loop() {
   else if(state1==1) state*=-1; //녹화와 평상시를 왔다갔다
   
 
-  if(state==0)
-  {
-    play();
-  }
+  if(state==0) play();
   else if(state==1)
   {
     resetrecord();
