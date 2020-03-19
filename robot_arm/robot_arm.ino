@@ -16,8 +16,8 @@
 #define yellow 11
 #define red 10
 
-#define record 2
-#define play 3
+#define record A6
+#define play A5
 
 int rfloor[20000]={0};
 int relbow[20000]={0};
