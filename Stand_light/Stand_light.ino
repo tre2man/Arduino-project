@@ -1,5 +1,4 @@
 #include <Adafruit_NeoPixel.h>
-#define input A0; //입력저항 포트
 
 #define Pin 5; //네오픽셀 출력 핀번호
 #define NUM_LEDS 30; //led 개수
@@ -8,7 +7,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRBW + NEO_KHZ800
 void setup() {
   pinMode(input,INPUT);
   strip.begin();
-  strip.start();
+  strip.show();
 }
 
 void loop() {
