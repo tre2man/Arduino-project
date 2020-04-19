@@ -65,9 +65,9 @@ void loop() {
 }
 
 void colorWipe(uint32_t color, int wait) {
-  for(int i=14; i<strip.numPixels(); i++) { // For each pixel in strip...
-    strip.setPixelColor(i, color);         //  Set pixel's color (in RAM)
-    strip.show();                          //  Update strip to match
+  for(int i=14; i<strip.numPixels(); i++) { 
+    strip.setPixelColor(i, color);        
+    strip.show();                          
     strip.setBrightness(State);
   }
 }
