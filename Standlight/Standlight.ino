@@ -48,7 +48,7 @@ void loop() {
 
   switch(Mode){
     case 0:
-      colorWipe(strip.Color(State,Red,Blue),1);
+      colorWipe(strip.Color(255,255,255),1);
       break;
     case 1:
       colorWipe(strip.Color(Green,State,Blue),1);
@@ -57,7 +57,7 @@ void loop() {
       colorWipe(strip.Color(Green,Red,State),1);
       break;
     case 3:
-      colorWipe(strip.Color(255,255,255),1);
+      colorWipe(strip.Color(State,Red,Blue),1);
       break;
   }
   
@@ -65,7 +65,7 @@ void loop() {
 }
 
 void colorWipe(uint32_t color, int wait) {
-  for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
+  for(int i=14; i<strip.numPixels(); i++) { // For each pixel in strip...
     strip.setPixelColor(i, color);         //  Set pixel's color (in RAM)
     strip.show();                          //  Update strip to match
     strip.setBrightness(State);
