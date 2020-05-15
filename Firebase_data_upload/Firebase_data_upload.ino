@@ -15,6 +15,8 @@
 
 //Required WiFiNINA Library for Arduino from https://github.com/arduino-libraries/WiFiNINA
 
+//nano 33 iot board
+
 #include "Firebase_Arduino_WiFiNINA.h"
 
 #define FIREBASE_HOST "tai-cap.firebaseio.com"
