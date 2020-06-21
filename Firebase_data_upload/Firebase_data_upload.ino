@@ -15,10 +15,11 @@
 
 //Required WiFiNINA Library for Arduino from https://github.com/arduino-libraries/WiFiNINA
 
-#include "Firebase_Arduino_WiFiNINA.h"
+//#include "Firebase_Arduino_WiFiNINA.h"
+#include "Firebase_Arduino_WiFi101.h"
 
 #define FIREBASE_HOST "tai-cap.firebaseio.com"
-#define FIREBASE_AUTH "IcWMWBG1cx0Co1ytrvDrYHhNXUG6hiFGxNXLl7R9"
+#define FIREBASE_AUTH "AIzaSyAdGUQtYxAqG5wlRO8EN8uIn3Zb2a6ofGo"
 #define WIFI_SSID "wlan20"
 #define WIFI_PASSWORD "0000003940"
 #define data1 A0
@@ -33,7 +34,6 @@ String jsonStr;
 
 void setup()
 {
-
   pinMode(data1,INPUT);
   pinMode(data2,INPUT);
   pinMode(data3,INPUT);
