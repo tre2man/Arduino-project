@@ -1,10 +1,10 @@
 /*
  * Created by K. Suwatchai (Mobizt)
- * 
+ *
  * Email: k_suwatchai@hotmail.com
- * 
+ *
  * Github: https://github.com/mobizt
- * 
+ *
  * Copyright (c) 2019 mobizt
  *
 */
@@ -15,8 +15,9 @@
 
 //Required WiFiNINA Library for Arduino from https://github.com/arduino-libraries/WiFiNINA
 
-//#include "Firebase_Arduino_WiFiNINA.h"
-#include "Firebase_Arduino_WiFi101.h"
+//nano 33 iot board
+
+#include "Firebase_Arduino_WiFiNINA.h"
 
 #define FIREBASE_HOST "tai-cap.firebaseio.com"
 #define FIREBASE_AUTH "AIzaSyAdGUQtYxAqG5wlRO8EN8uIn3Zb2a6ofGo"
@@ -47,7 +48,7 @@ void setup()
   {
     status = WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     Serial.print(".");
-    delay(300); 
+    delay(300);
   }
   Serial.println();
   Serial.print("Connected with IP: ");
@@ -65,7 +66,7 @@ void setup()
 
 void loop()
 {
-  
+
   int a1=analogRead(data1);
   int a2=analogRead(data2);
   int a3=analogRead(data3);
@@ -75,18 +76,18 @@ void loop()
   Serial.print(a2);
   Serial.print(" ");
   Serial.println(a3);
-  
+
   jsonStr = "{\"AnalogData1" "\":" + String(a1) + "}" ;
   //Firebase.pushJSON(firebaseData, path , jsonStr);
   Firebase.updateNode(firebaseData, path , jsonStr);
-  
+
   jsonStr = "{\"AnalogData2" "\":" + String(a2) + "}" ;
   Firebase.updateNode(firebaseData, path , jsonStr);
-  
+
   jsonStr = "{\"AnalogData3" "\":" + String(a3) + "}" ;
   Firebase.updateNode(firebaseData, path , jsonStr);
-  
+
 
   delay(1);
-  
+
 }
