@@ -62,9 +62,11 @@ void setup() {
   pinMode(Digital2,INPUT);
   pinMode(Digital3,INPUT);
   pinMode(Digital4,INPUT);
-  pinMode(Digital5,INPUT);
-  pinMode(Digital6,INPUT);
-  pinMode(Digital7,INPUT);
+
+  //모터드라이버는 3개의 핀 사용함
+  pinMode(Digital5,OUTPUT);
+  pinMode(Digital6,OUTPUT);
+  pinMode(Digital7,OUTPUT);
 
   //시간 알기 위한 소스
   configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov"); 
@@ -88,14 +90,23 @@ void loop() {
     digitalData2 = digitalRead(D2);
     digitalData3 = digitalRead(D3);
     digitalData4 = digitalRead(D4);
+    
+    /*
     digitalData5 = digitalRead(D5);
     digitalData6 = digitalRead(D6);
     digitalData7 = digitalRead(D7);
+    */
 
     time_t now = time(nullptr); 
     struct tm * timeinfo;
     timeinfo = localtime(&now);
 
+    //수류모터 동작 코드
+    /*
+     * if(동작조건) sink(0)
+     * if(멈춤조건) sink(1)
+     */
+    
     /*
     String Syear = String((timeinfo->tm_year)+1900, DEC);
     String Smonth = String((timeinfo->tm_mon)+1, DEC);
@@ -155,5 +166,18 @@ void upload() {
     Serial.println(String("GET ") + 
     host + "temp=" + String(AnalogData) + "&sw1=" + String(digitalData0) + "&sw2=" + String(digitalData1) + "&date=" + String(date) + "&time=" + String(times) +
     " HTTP/1.1\r\n" + "Host: " + SERVER + "\r\n" + "Connection: close\r\n\r\n");
+  }
+}
+
+void sink(state){
+  if(state){
+    digitalWrite(Digital7,HIGH);
+    digitalWrite(Digital8,LOW);
+    digitalWrite(Digital9,100);
+  }
+  else{
+    digitalWrite(Digital7,LOW);
+    digitalWrite(Digital8,HIGH);
+    digitalWrite(Digital9,0);
   }
 }
