@@ -24,7 +24,7 @@ void loop() { // do nothing here
 
   lcd2.begin();
   lcd2.home();
-  lcd2.print("Dongseob Sin");
+  lcd2.print("Dongseob Shin");
   lcd2.setCursor(0,1);
   lcd2.print("Hyonsik Kim");
  
