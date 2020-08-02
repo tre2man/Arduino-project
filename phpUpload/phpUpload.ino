@@ -1,6 +1,11 @@
+//1번과 2번 입력을 7번과 8번 입력으로 이동
+//1번과 2번은 I2C 통신을 위한 포트로 돌리기
+
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <time.h>
+#include <Wire.h>
+
+#define DS3231_I2C_ADDRESS 0x68
 
 const char* ssid     = "ppp";
 const char* password = "0000003940";
@@ -12,51 +17,56 @@ WiFiServer server(80);
 WiFiClient client;
 HTTPClient http;
 
-//~초마다 실행하기 위한 1시간마다 1번 업로드
-unsigned long previousMillis = 0;
-//const long interval = 1000;
-const long interval = 3600000;
-
 //각 칸에 맞는 변수만 골라서 사용함.
 static int Analog = A0; 
 static int Digital0 = D0; 
-static int Digital1 = D1; 
-static int Digital2 = D2; 
+//static int Digital1 = D1; 
+//static int Digital2 = D2; 
 static int Digital3 = D3; 
 static int Digital4 = D4; 
 static int Digital5 = D5; 
 static int Digital6 = D6; 
 static int Digital7 = D7; 
+static int Digital8 = D8; 
 
 //전역변수 이전 데이터 저장
 int AnalogDataBefore = 0;
 int digitalData0Before = 0;
-int digitalData1Before = 0;
-int digitalData2Before = 0;
+//int digitalData1Before = 0;
+//int digitalData2Before = 0;
 int digitalData3Before = 0;
 int digitalData4Before = 0;
 int digitalData5Before = 0;
 int digitalData6Before = 0;
 int digitalData7Before = 0;
+int digitalData8Before = 0;
 
 //전역변수, 1시간 데이터 저장
 int AnalogDataSave = 0;
 int digitalData0Save = 0;
-int digitalData1Save = 0;
-int digitalData2Save = 0;
+//int digitalData1Save = 0;
+//int digitalData2Save = 0;
 int digitalData3Save = 0;
 int digitalData4Save = 0;
 int digitalData5Save = 0;
 int digitalData6Save = 0;
 int digitalData7Save = 0;
+int digitalData8Save = 0;
+
+//Gas 태그
+bool gasCheck = 1;
 
 //시간 저장하는 변수
-String date,times;
-int timezone = 3; 
-int dst = 0; 
+int Beforehours = 0;
+String Sdates,Shours,Smonth,Sdate; 
 
-int faketime = 0;
-int first = 1;
+//RTC 관련 변수
+byte seconds, minutes, hours, day, date, month, year;
+char weekDay[4];
+ 
+byte tMSB, tLSB;
+float temp3231;
+
 
 void setup() {
   Serial.begin(115200);
@@ -72,64 +82,89 @@ void setup() {
   //각 핀에 맞게 입력핀 설정
   pinMode(Analog,INPUT);
   pinMode(Digital0,INPUT);
-  pinMode(Digital1,INPUT);
-  pinMode(Digital2,INPUT);
+  //pinMode(Digital1,INPUT);
+  //pinMode(Digital2,INPUT);
   pinMode(Digital3,INPUT);
   pinMode(Digital4,INPUT);
   pinMode(Digital5,INPUT);
   pinMode(Digital6,INPUT);
   pinMode(Digital7,INPUT);
+  pinMode(Digital8,INPUT);
 
-  //시간 알기 위한 소스
-  configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov"); 
-  Serial.println("\n시간 설정 중...10초 소요");
-  while (!time(nullptr)) {
-    Serial.print(".");
-    delay(1000);
-  }
-  Serial.println("");
+  //RTC 초기설정
+  Wire.begin(D2, D1);
+  get3231Date();
+  Beforehours = hours;
 }
 
 void loop() {  
 
+  //시간데이터 입출력
+  watchConsole();
+  get3231Date();
+
+  Serial.print(weekDay);
+  Serial.print(", 20");
+  Serial.print(year, DEC);
+  Serial.print("/");
+  Serial.print(month, DEC);
+  Serial.print("/");
+  Serial.print(date, DEC);
+  Serial.print(" - ");
+  Serial.print(hours, DEC); 
+  Serial.print(":"); 
+  Serial.print(minutes, DEC); 
+  Serial.print(":"); 
+  Serial.print(seconds, DEC);
+  
+
   //현재 데이터 수집
   int AnalogData = analogRead(A0);
   int digitalData0 = digitalRead(D0);
-  int digitalData1 = digitalRead(D1);
-  int digitalData2 = digitalRead(D2);
+  //int digitalData1 = digitalRead(D1);
+  //int digitalData2 = digitalRead(D2);
   int digitalData3 = digitalRead(D3);
   int digitalData4 = digitalRead(D4);
   int digitalData5 = digitalRead(D5);
   int digitalData6 = digitalRead(D6);
   int digitalData7 = digitalRead(D7);
+  int digitalData8 = digitalRead(D8);
 
   //상태 변화 감지하면 횟수 증가
   if(digitalData0 != digitalData0Before) digitalData0Save++;
-  if(digitalData1 != digitalData1Before) digitalData1Save++;
-  if(digitalData2 != digitalData2Before) digitalData2Save++;
+  //if(digitalData1 != digitalData1Before) digitalData1Save++;
+  //if(digitalData2 != digitalData2Before) digitalData2Save++;
   if(digitalData3 != digitalData3Before) digitalData3Save++;
   if(digitalData4 != digitalData4Before) digitalData4Save++;
   if(digitalData5 != digitalData5Before) digitalData5Save++;
   if(digitalData6 != digitalData6Before) digitalData6Save++;
   if(digitalData7 != digitalData7Before) digitalData7Save++;
-  if(AnalogData > 50)  
+  if(digitalData8 != digitalData8Before) digitalData8Save++;
+  
+  //가스센서체크
+  if(AnalogData > 500 && gasCheck == true) {
+    AnalogDataSave++;
+    gasCheck = false;
+  }
+  if(AnalogData < 500) gasCheck = true;
 
   //이전 데이터 입력
   digitalData0Before = digitalData0;
-  digitalData1Before = digitalData1;
-  digitalData2Before = digitalData2;
+  //digitalData1Before = digitalData1;
+  //digitalData2Before = digitalData2;
   digitalData3Before = digitalData3;
   digitalData4Before = digitalData4;
   digitalData5Before = digitalData5;
   digitalData6Before = digitalData6;
   digitalData7Before = digitalData7;
+  digitalData8Before = digitalData8;
 
   Serial.print("LivingRoom Count : ");
   Serial.println(digitalData0);
   Serial.print("Room1 Count : ");
-  Serial.println(digitalData1);
+  Serial.println(digitalData7);
   Serial.print("Room2 Count : ");
-  Serial.println(digitalData2);
+  Serial.println(digitalData8);
   Serial.print("Bathroom Count : ");
   Serial.println(digitalData3);
   Serial.print("Toilet Count : ");
@@ -139,65 +174,56 @@ void loop() {
   Serial.print("PIR Count : ");
   Serial.println(digitalData6);
   Serial.print("Gas Count : ");
-  Serial.println(AnalogData);
+  Serial.println(AnalogDataSave);
   Serial.print("\n");
   
-  if (currentMillis - previousMillis >= interval && first == 0) {
-    previousMillis = currentMillis;
+  //시간당 한 번씩 데이터 업로드
+  if (hours != Beforehours) {
+    Beforehours = hours;
 
     Serial.print("LivingRoom Count : ");
     Serial.println(digitalData0Save);
     Serial.print("Room1 Count : ");
-    Serial.println(digitalData0Save);
+    Serial.println(digitalData7Save);
     Serial.print("Room2 Count : ");
-    Serial.println(digitalData0Save);
+    Serial.println(digitalData8Save);
     Serial.print("Bathroom Count : ");
-    Serial.println(digitalData0Save);
+    Serial.println(digitalData3Save);
     Serial.print("Toilet Count : ");
-    Serial.println(digitalData0Save);
+    Serial.println(digitalData4Save);
     Serial.print("Water Count : ");
-    Serial.println(digitalData0Save);
+    Serial.println(digitalData5Save);
     Serial.print("PIR Count : ");
-    Serial.println(digitalData0Save);
+    Serial.println(digitalData6Save);
     Serial.print("Gas Count : ");
-    Serial.println(AnalogData);
+    Serial.println(AnalogDataSave);
     Serial.print("\n");
 
-    time_t now = time(nullptr); 
-    struct tm * timeinfo;
-    timeinfo = localtime(&now);
+    if(month < 10) Smonth = "0" + String(month);
+    else Smonth = String(month);
 
-    String Syear = String((timeinfo->tm_year)-100, DEC);
-    String Smonth = String((timeinfo->tm_mon)+1, DEC);
-    String Sday = String((timeinfo->tm_mday), DEC);
-    String Shour = String((timeinfo->tm_hour), DEC);
-    String Smin = String((timeinfo->tm_min), DEC);
-    String Ssec = String((timeinfo->tm_sec), DEC);
-
-    if((timeinfo->tm_mon)+1<10) Smonth =  "0" + String((timeinfo->tm_mon)+1);
-    if((timeinfo->tm_mday)<10) Sday =  "0" + String(timeinfo->tm_mday);
-    if((timeinfo->tm_hour)<10) Shour =  "0" + String(timeinfo->tm_hour);
-    if((timeinfo->tm_min)<10) Smin =  "0" + String(timeinfo->tm_min);
-    if((timeinfo->tm_sec)<10) Ssec =  "0" + String(timeinfo->tm_sec);
-
-    date = Syear + "-" + Smonth + "-" + Sday; 
-    times = Shour;
-
-    Serial.println(date);
-    Serial.println(times);
+    if(date < 10) Sdate = "0" + String(date);
+    else Sdate = String(date);
+    
+    Sdates = String(year) + Smonth + Sdate;
+    Shours = String(hours);
+    Serial.println(Sdates);
+    Serial.println(Shours);
     Serial.print("\n");
   
-    //upload();
+    upload();
 
     //저장해둔 변수 초기화
     digitalData0Save = 0;
-    digitalData1Save = 0;
-    digitalData2Save = 0;
+    //digitalData1Save = 0;
+    //digitalData2Save = 0;
     digitalData3Save = 0;
     digitalData4Save = 0;
     digitalData5Save = 0;
     digitalData6Save = 0;
     digitalData7Save = 0;
+    digitalData8Save = 0;
+    AnalogDataSave = 0;
   }
 }
 
@@ -209,11 +235,108 @@ void upload() {
   if (client.connect(SERVER, 80))
   {
     client.print(String("GET ") + 
-    host + "LivingRoom=" + String(digitalData0) + "&Room1=" + String(digitalData1) + "&Room2=" + String(digitalData2) + "&Bathroom=" + String(digitalData3) + "&Toilet=" + String(digitalData4) + "&Water=" + String(digitalData5) + "&PIR=" + String(digitalData1)  + "&Gas=" + String(digitalData1) + "&date=" + String(date) + "&time=" + String(times) +
+    host + "LivingRoom=" + String(digitalData0Save) + "&Room1=" + String(digitalData7Save) + "&Room2=" + String(digitalData8Save) + "&Bathroom=" + String(digitalData3Save) + "&Toilet=" + String(digitalData4Save) + "&Water=" + String(digitalData5Save) + "&PIR=" + String(digitalData6Save)  + "&Gas=" + String(AnalogDataSave) + "&date=" + Sdates + "&time=" + Shours +
     " HTTP/1.1\r\n" + "Host: " + SERVER + "\r\n" + "Connection: close\r\n\r\n");
 
     Serial.println(String("GET ") + 
-   host + "LivingRoom=" + String(digitalData0) + "&Room1=" + String(digitalData1) + "&Room2=" + String(digitalData2) + "&Bathroom=" + String(digitalData3) + "&Toilet=" + String(digitalData4) + "&Water=" + String(digitalData5) + "&PIR=" + String(digitalData1)  + "&Gas=" + String(digitalData1) + "&date=" + String(date) + "&time=" + String(times) +
+    host + "LivingRoom=" + String(digitalData0Save) + "&Room1=" + String(digitalData7Save) + "&Room2=" + String(digitalData8Save) + "&Bathroom=" + String(digitalData3Save) + "&Toilet=" + String(digitalData4Save) + "&Water=" + String(digitalData5Save) + "&PIR=" + String(digitalData6Save)  + "&Gas=" + String(AnalogDataSave) + "&date=" + Sdates + "&time=" + Shours +
     " HTTP/1.1\r\n" + "Host: " + SERVER + "\r\n" + "Connection: close\r\n\r\n");
+  }
+}
+
+// 10진수를 2진화 10진수인 BCD 로 변환 
+byte decToBcd(byte val)
+{
+  return ( (val/10*16) + (val%10) );
+}
+ 
+void watchConsole()
+{
+  if (Serial.available()) {      // Look for char in serial queue and process if found
+    if (Serial.read() == 84) {   //If command = "T" Set Date
+      set3231Date();
+      get3231Date();
+      Serial.println(" ");
+    }
+  }
+}
+ 
+//시간설정
+// T(설정명령) + 년(00~99) + 월(01~12) + 일(01~31) + 시(00~23) + 분(00~59) + 초(00~59) + 요일(1~7, 일1 월2 화3 수4 목5 금6 토7)
+// 예: T1605091300002 (2016년 5월 9일 13시 00분 00초 월요일)
+void set3231Date()
+{
+  year    = (byte) ((Serial.read() - 48) *10 +  (Serial.read() - 48));
+  month   = (byte) ((Serial.read() - 48) *10 +  (Serial.read() - 48));
+  date    = (byte) ((Serial.read() - 48) *10 +  (Serial.read() - 48));
+  hours   = (byte) ((Serial.read() - 48) *10 +  (Serial.read() - 48));
+  minutes = (byte) ((Serial.read() - 48) *10 +  (Serial.read() - 48));
+  seconds = (byte) ((Serial.read() - 48) * 10 + (Serial.read() - 48));
+  day     = (byte) (Serial.read() - 48);
+ 
+  Wire.beginTransmission(DS3231_I2C_ADDRESS);
+  Wire.write(0x00);
+  Wire.write(decToBcd(seconds));
+  Wire.write(decToBcd(minutes));
+  Wire.write(decToBcd(hours));
+  Wire.write(decToBcd(day));
+  Wire.write(decToBcd(date));
+  Wire.write(decToBcd(month));
+  Wire.write(decToBcd(year));
+  Wire.endTransmission();
+}
+
+//RTC 시간 가져오기
+void get3231Date()
+{
+  // send request to receive data starting at register 0
+  Wire.beginTransmission(DS3231_I2C_ADDRESS); // 104 is DS3231 device address
+  Wire.write(0x00); // start at register 0
+  Wire.endTransmission();
+  Wire.requestFrom(DS3231_I2C_ADDRESS, 7); // request seven bytes
+ 
+  if(Wire.available()) {
+    seconds = Wire.read(); // get seconds
+    minutes = Wire.read(); // get minutes
+    hours   = Wire.read();   // get hours
+    day     = Wire.read();
+    date    = Wire.read();
+    month   = Wire.read(); //temp month
+    year    = Wire.read();
+       
+    seconds = (((seconds & B11110000)>>4)*10 + (seconds & B00001111)); // convert BCD to decimal
+    minutes = (((minutes & B11110000)>>4)*10 + (minutes & B00001111)); // convert BCD to decimal
+    hours   = (((hours & B00110000)>>4)*10 + (hours & B00001111)); // convert BCD to decimal (assume 24 hour mode)
+    day     = (day & B00000111); // 1-7
+    date    = (((date & B00110000)>>4)*10 + (date & B00001111)); // 1-31
+    month   = (((month & B00010000)>>4)*10 + (month & B00001111)); //msb7 is century overflow
+    year    = (((year & B11110000)>>4)*10 + (year & B00001111));
+  }
+  else {
+    //oh noes, no data!
+  }
+ 
+  switch (day) {
+    case 1:
+      strcpy(weekDay, "Sun");
+      break;
+    case 2:
+      strcpy(weekDay, "Mon");
+      break;
+    case 3:
+      strcpy(weekDay, "Tue");
+      break;
+    case 4:
+      strcpy(weekDay, "Wed");
+      break;
+    case 5:
+      strcpy(weekDay, "Thu");
+      break;
+    case 6:
+      strcpy(weekDay, "Fri");
+      break;
+    case 7:
+      strcpy(weekDay, "Sat");
+      break;
   }
 }
