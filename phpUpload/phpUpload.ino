@@ -7,12 +7,17 @@
 
 //인터넷 연결 실패 방지를 위해 업로드 플래그를 추가
 
+#include <LiquidCrystal_I2C.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <Wire.h>
 #include <time.h>
 
 #define DS3231_I2C_ADDRESS 0x68
+
+//LCD를 쓰게 된다면?
+//LiquidCrystal_I2C lcd1(0x27, 16, 2);
+//LiquidCrystal_I2C lcd2(0x26, 16, 2);
 
 const char* ssid     = "ppp";
 const char* password = "0000003940";
@@ -124,6 +129,10 @@ void setup() {
   Serial.println(seconds, DEC);
     
   Beforehours = hours;
+ 
+  //LCD 실행
+  //lcd1.begin();
+  //lcd2.begin();
 }
 
 void loop() {    
@@ -172,7 +181,7 @@ void loop() {
   digitalData7Before = digitalData7;
   digitalData8Before = digitalData8;
 
-  //1분당 한번씩 결과 표시 및 네트워크 체크
+  //1분당 한번씩 결과 표시
   unsigned long currentMil = millis();
   if(currentMil - preMil >= interval){
     preMil = currentMil;
@@ -209,6 +218,27 @@ void loop() {
     Serial.println(AnalogDataSave);
     Serial.print("\n");
   }
+ 
+ /*
+  //LCD에 현재 상태 출력하는 곳
+  lcd1.begin();
+  lcd1.clear();
+  lcd1.home();
+  lcd1.print("LivingRoom : ");
+  lcd1.print(digitalData0Save);
+  lcd1.setCursor(0,1);
+  lcd1.print("Bathroom : ");
+  lcd1.print(digitalData3Save);
+
+  lcd2.begin();
+  lcd2.clear();
+  lcd2.home();
+  lcd2.print("Room1 : ");
+  lcd2.print(digitalData7Save);
+  lcd2.setCursor(0,1);
+  lcd2.print("Room2 : ");
+  lcd2.print(digitalData8Save);
+  */
 
   //정각일 경우에 업로드 플래그 true
   if (hours != Beforehours) {
