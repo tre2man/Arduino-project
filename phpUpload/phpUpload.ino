@@ -224,24 +224,24 @@ void loop() {
 
   //1초에 한번씩 시리얼 신호 
   unsigned long currentMil = millis();
-  if(currentMil - preMil >= interval){
+  if(currentMil - preMil >= realinterval){
     preMil = currentMil;
 
-    Serial.println(digitalData0Save);
+    Serial.print(digitalData0Save);
     Serial.print("n");
-    Serial.println(digitalData7Save);
+    Serial.print(digitalData7Save);
     Serial.print("n");
-    Serial.println(digitalData8Save);
+    Serial.print(digitalData8Save);
     Serial.print("n");
-    Serial.println(digitalData3Save);
+    Serial.print(digitalData3Save);
     Serial.print("n");
-    Serial.println(digitalData4Save);
+    Serial.print(digitalData4Save);
     Serial.print("n");
-    Serial.println(digitalData5Save);
+    Serial.print(digitalData5Save);
     Serial.print("n");
-    Serial.println(digitalData6Save);
+    Serial.print(digitalData6Save);
     Serial.print("n");
-    Serial.println(AnalogDataSave);
+    Serial.print(AnalogDataSave);
     Serial.print("p");
     Serial.print(weekDay);
     Serial.print(", 20");
