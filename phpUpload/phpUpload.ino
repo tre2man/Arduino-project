@@ -182,6 +182,7 @@ void loop() {
   digitalData7Before = digitalData7;
   digitalData8Before = digitalData8;
 
+/*
   //1분당 한번씩 결과 표시
   unsigned long currentMil = millis();
   if(currentMil - preMil >= interval){
@@ -218,6 +219,43 @@ void loop() {
     Serial.print("Gas Count : ");
     Serial.println(AnalogDataSave);
     Serial.print("\n");
+  }
+*/
+
+  //1초에 한번씩 시리얼 신호 
+  unsigned long currentMil = millis();
+  if(currentMil - preMil >= interval){
+    preMil = currentMil;
+
+    Serial.println(digitalData0Save);
+    Serial.print("n");
+    Serial.println(digitalData7Save);
+    Serial.print("n");
+    Serial.println(digitalData8Save);
+    Serial.print("n");
+    Serial.println(digitalData3Save);
+    Serial.print("n");
+    Serial.println(digitalData4Save);
+    Serial.print("n");
+    Serial.println(digitalData5Save);
+    Serial.print("n");
+    Serial.println(digitalData6Save);
+    Serial.print("n");
+    Serial.println(AnalogDataSave);
+    Serial.print("p");
+    Serial.print(weekDay);
+    Serial.print(", 20");
+    Serial.print(year, DEC);
+    Serial.print("/");
+    Serial.print(month, DEC);
+    Serial.print("/");
+    Serial.print(date, DEC);
+    Serial.print(" - ");
+    Serial.print(hours, DEC);
+    Serial.print(":");
+    Serial.print(minutes, DEC);
+    Serial.print(":");
+    Serial.println(seconds, DEC);
   }
 
  /*
