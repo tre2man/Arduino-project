@@ -108,6 +108,21 @@ void setup() {
   //RTC 초기설정
   Wire.begin(D2, D1);
   get3231Date();
+  
+  Serial.print(weekDay);
+  Serial.print(", 20");
+  Serial.print(year, DEC);
+  Serial.print("/");
+  Serial.print(month, DEC);
+  Serial.print("/");
+  Serial.print(date, DEC);
+  Serial.print(" - ");
+  Serial.print(hours, DEC); 
+  Serial.print(":"); 
+  Serial.print(minutes, DEC); 
+  Serial.print(":"); 
+  Serial.println(seconds, DEC);
+    
   Beforehours = hours;
 }
 
