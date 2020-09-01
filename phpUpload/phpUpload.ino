@@ -242,9 +242,9 @@ void loop() {
     Serial.print(digitalData6Save);
     Serial.print("n");
     Serial.print(AnalogDataSave);
-    Serial.print("p");
+    Serial.print("n");
     Serial.print(weekDay);
-    Serial.print(", 20");
+    Serial.print(",          20");
     Serial.print(year, DEC);
     Serial.print("/");
     Serial.print(month, DEC);
@@ -290,23 +290,35 @@ void loop() {
     WiFiClient client;
 
     if (client.connect(SERVER, 80) && uploadTrue) {
-      Serial.print("LivingRoom Count : ");
-      Serial.println(digitalData0Save);
-      Serial.print("Room1 Count : ");
-      Serial.println(digitalData7Save);
-      Serial.print("Room2 Count : ");
-      Serial.println(digitalData8Save);
-      Serial.print("Bathroom Count : ");
-      Serial.println(digitalData3Save);
-      Serial.print("Toilet Count : ");
-      Serial.println(digitalData4Save);
-      Serial.print("Water Count : ");
-      Serial.println(digitalData5Save);
-      Serial.print("PIR Count : ");
-      Serial.println(digitalData6Save);
-      Serial.print("Gas Count : ");
-      Serial.println(AnalogDataSave);
-      Serial.print("\n");
+    Serial.print(digitalData0Save);
+    Serial.print("n");
+    Serial.print(digitalData7Save);
+    Serial.print("n");
+    Serial.print(digitalData8Save);
+    Serial.print("n");
+    Serial.print(digitalData3Save);
+    Serial.print("n");
+    Serial.print(digitalData4Save);
+    Serial.print("n");
+    Serial.print(digitalData5Save);
+    Serial.print("n");
+    Serial.print(digitalData6Save);
+    Serial.print("n");
+    Serial.print(AnalogDataSave);
+    Serial.print("n");
+    Serial.print(weekDay);
+    Serial.print(", 20");
+    Serial.print(year, DEC);
+    Serial.print("/");
+    Serial.print(month, DEC);
+    Serial.print("/");
+    Serial.print(date, DEC);
+    Serial.print(" - ");
+    Serial.print(hours, DEC);
+    Serial.print(":");
+    Serial.print(minutes, DEC);
+    Serial.print(":");
+    Serial.println(seconds, DEC);
 
       if(month < 10) Smonth = "0" + String(month);
       else Smonth = String(month);
@@ -320,18 +332,11 @@ void loop() {
       Serial.println(Shours);
       Serial.print("\n");
 
-      client.print(String("GET ") +
-      host + "LivingRoom=" + String(digitalData0Save) + "&Room1=" + String(digitalData7Save) + "&Room2=" + String(digitalData8Save) + "&Bathroom=" + String(digitalData3Save) + "&Toilet=" + String(digitalData4Save) + "&Water=" + String(digitalData5Save) + "&PIR=" + String(digitalData6Save)  + "&Gas=" + String(AnalogDataSave) + "&date=" + Sdates + "&time=" + Shours +
-      " HTTP/1.1\r\n" + "Host: " + SERVER + "\r\n" + "Connection: close\r\n\r\n");
-
-      Serial.println(String("GET ") +
-      host + "LivingRoom=" + String(digitalData0Save) + "&Room1=" + String(digitalData7Save) + "&Room2=" + String(digitalData8Save) + "&Bathroom=" + String(digitalData3Save) + "&Toilet=" + String(digitalData4Save) + "&Water=" + String(digitalData5Save) + "&PIR=" + String(digitalData6Save)  + "&Gas=" + String(AnalogDataSave) + "&date=" + Sdates + "&time=" + Shours +
-      " HTTP/1.1\r\n" + "Host: " + SERVER + "\r\n" + "Connection: close\r\n\r\n");
 
       uploadTrue = false;
     }
     else {
-      Serial.println("DB 업로드에 실패했습니다.\n");
+      Serial.println("                  DB 업로드에 실패했습니다.\n");
     }
 
     //저장해둔 변수 초기화
