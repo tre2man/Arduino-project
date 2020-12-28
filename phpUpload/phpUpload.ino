@@ -244,7 +244,7 @@ void loop() {
     Serial.print(AnalogDataSave);
     Serial.print("p");
     Serial.print(weekDay);
-    Serial.print(", 20");
+    Serial.print(",    20");
     Serial.print(year, DEC);
     Serial.print("/");
     Serial.print(month, DEC);

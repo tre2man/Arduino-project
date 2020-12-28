@@ -1,6 +1,6 @@
 #include <Wire.h>
  
-#define DS3231_I2C_ADDRESS 0x68
+#define DS3231_I2C_ADDRESS 104
  
 // 데이터핀 연결
 // SCL - pin A5
@@ -14,9 +14,8 @@ float temp3231;
  
 void setup()
 {
-  Wire.begin(D2, D1);
+  Wire.begin(D2,D1);
   Serial.begin(115200);
-  pinMode(D0,INPUT);
 }
  
 void loop()
@@ -38,8 +37,8 @@ void loop()
   Serial.print(minutes, DEC); 
   Serial.print(":"); 
   Serial.print(seconds, DEC);
-  Serial.print(" - Gas: "); 
-  Serial.println(analogRead(D0));
+  Serial.print(" - Temp: "); 
+  Serial.println(get3231Temp());
  
   delay(1000);
 }
@@ -139,4 +138,25 @@ void get3231Date()
       strcpy(weekDay, "Sat");
       break;
   }
+}
+ 
+float get3231Temp()
+{
+  //temp registers (11h-12h) get updated automatically every 64s
+  Wire.beginTransmission(DS3231_I2C_ADDRESS);
+  Wire.write(0x11);
+  Wire.endTransmission();
+  Wire.requestFrom(DS3231_I2C_ADDRESS, 2);
+ 
+  if(Wire.available()) {
+    tMSB = Wire.read(); //2's complement int portion
+    tLSB = Wire.read(); //fraction portion
+   
+    temp3231 = (tMSB & B01111111); //do 2's math on Tmsb
+    temp3231 += ( (tLSB >> 6) * 0.25 ); //only care about bits 7 & 8
+  }
+  else {
+    //error! no data!
+  }
+  return temp3231;
 }
